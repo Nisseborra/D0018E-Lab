@@ -3,9 +3,9 @@ import { useNavigate} from "react-router-dom";
 
 
 
-
-export default function loggin(){
-        const nav = useNavigate();
+export default function Signup(){
+    
+       const nav = useNavigate();
 
 
 
@@ -14,6 +14,12 @@ export default function loggin(){
             <h1>
                 Logging
             </h1>
+             <label >firstname: </label> <br></br>
+                <input  placeholder="Firstname"></input> <br></br>
+
+                <label >Lastname: </label> <br></br>
+                <input  placeholder="Lastname"></input> <br></br>
+
                 <label >Username: </label> <br></br>
                 <input  placeholder="Username"></input> <br></br>
 
@@ -24,7 +30,6 @@ export default function loggin(){
     <button>Loggin</button>
         
         </div>
-
-        
     )
+
 }
