@@ -1,3 +1,4 @@
+import mysql from 'mysql2'
 const express = require('express');
 const http = require('http');
 const { connect } = require('http2');
@@ -8,6 +9,14 @@ const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
+const pool = mysql.createpool({
+    host: '',
+    user: 'root',
+    password: '',
+    database: 'D0018E'
+}).promise()
+
+const result = await pool.query();
 
 const io = new Server(server, {
     cors: {
