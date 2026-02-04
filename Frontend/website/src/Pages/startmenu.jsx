@@ -7,12 +7,12 @@ function startmenu(){
       const [count, setCount] = useState(0)
 
     return(
-
-        <body>
+        <div>
+        
             <button onClick={()=> nav("/loggin")}>Logg in</button> <br></br>
             <button onClick={()=> nav("/signup")}>Sign Up</button><br></br>
             <button onClick={()=> nav("/item")}>Advertisement</button>
-        </body>
+        </div>
     )
 }
 

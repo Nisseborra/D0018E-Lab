@@ -1,4 +1,4 @@
-import mysql from 'mysql2'
+//import mysql from 'mysql2'
 const express = require('express');
 const http = require('http');
 const { connect } = require('http2');
@@ -9,7 +9,7 @@ const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
-const pool = mysql.createpool({
+/*const pool = mysql.createpool({
     host: '',
     user: 'root',
     password: '',
@@ -17,6 +17,7 @@ const pool = mysql.createpool({
 }).promise()
 
 const result = await pool.query();
+*/
 
 const io = new Server(server, {
     cors: {
@@ -25,8 +26,21 @@ const io = new Server(server, {
     },
 });
 
+const test = ['nils','123']
+
 io.on('connection', (socket) => {
         console.log('connected:', socket.id);
+
+    socket.on("loggin", ({username, Password})=>{
+        console.log("loggin in server")
+            console.log("test user", test[0] == username)
+            console.log("test password",test[1])
+        if(test[0] === username && test[1] === Password){
+            socket.emit("logging_success", username)
+            return
+        }
+        socket.emit("loggin_error", "loggin error")
+    });
 
  });
 
