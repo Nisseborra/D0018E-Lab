@@ -1,4 +1,4 @@
-//import mysql from 'mysql2'
+const mysql = require('mysql2');
 const express = require('express');
 const http = require('http');
 const { connect } = require('http2');
@@ -9,15 +9,37 @@ const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
-/*const pool = mysql.createpool({
-    host: '',
-    user: 'root',
-    password: '',
-    database: 'D0018E'
+const pool = mysql.createPool({
+    host:'localhost',            //process.env.MYSQL_HOST,
+    user:'root' ,               //process.env.MYSQL_USER,
+    password:'root',              //process.env.MYSQL_PASSWORD,
+    database:'D0018E'               ///process.env.MYSQL_DATABASE
 }).promise()
 
-const result = await pool.query();
-*/
+//////////////////// DATABASE TABLE GETERS
+
+async function getItem() {
+  //console.log("calling");
+  const [rows] = await pool.query("SELECT * FROM ITEM");
+  console.log(rows);
+  
+  return rows;
+}
+
+async function getItem(id) {
+    const [rows] = await pool.query(`
+        SELECT * 
+        FROM ITEM
+        WHERE ITEM_ID = ${id}
+        `);
+    console.log(rows);
+    
+    return rows;
+}
+
+getItem(1)
+
+
 
 const io = new Server(server, {
     cors: {
@@ -47,6 +69,6 @@ io.on('connection', (socket) => {
 
 
 server.listen(3000, () => {
-  console.log('server started');
+  console.log('server starta');
 });
 
