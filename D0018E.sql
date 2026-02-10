@@ -146,6 +146,8 @@ CREATE TABLE `USERS` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+
 --
 -- Dumping data for table `USERS`
 --
@@ -153,6 +155,7 @@ CREATE TABLE `USERS` (
 LOCK TABLES `USERS` WRITE;
 /*!40000 ALTER TABLE `USERS` DISABLE KEYS */;
 /*!40000 ALTER TABLE `USERS` ENABLE KEYS */;
+INSERT INTO `USERS` VALUES ('nils', 'Nils', 'Bohlin', '123');
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

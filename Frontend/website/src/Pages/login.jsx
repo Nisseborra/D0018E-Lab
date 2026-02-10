@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 
 export default function Loggin(){
-        const nav = useNavigate();
+    const nav = useNavigate();
      useEffect(()=> {
       
         const loggin_success =(username)=>{
@@ -25,6 +25,8 @@ export default function Loggin(){
         
 
      return () => {
+        socket.off("logging_success", loggin_success )
+        socket.off("loggin_error", loggin_error)
       
     };
        
@@ -35,7 +37,6 @@ function logg(){
             console.log("loggin in button pressed")
             const username = document.getElementById("log_username").value;
             const Password = document.getElementById("log_password").value;
-
             socket.emit("loggin", {username, Password})
 
         }
