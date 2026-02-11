@@ -12,6 +12,7 @@ export default function Loggin(){
      useEffect(()=> {
       
         const loggin_success =(username)=>{
+            
             alert("Correct")
             nav("/")
         }
@@ -47,10 +48,10 @@ function logg(){
                 Loggin
             </h1>
                 <label >Username: </label> <br></br>
-                <input id="log_username" placeholder="Username"></input> <br></br>
+                <input id="log_username" placeholder="Username" maxLength={15}></input> <br></br>
 
       <label >Password: </label> <br></br>
-    <input id="log_password" placeholder="Password"></input> <br></br>
+    <input id="log_password" placeholder="Password" type="password" maxLength={15}></input> <br></br>
     <button onClick={()=>nav("/")}>back</button>
     <button onClick={logg}>loggin</button>
         

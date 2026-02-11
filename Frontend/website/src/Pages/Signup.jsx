@@ -5,11 +5,7 @@ import { useEffect } from "react";
 
 
 
-export default function Signup(){
-
-
-  
-        
+export default function Signup(){      
        const nav = useNavigate();
 
         useEffect(()=> {
@@ -29,15 +25,24 @@ export default function Signup(){
               
            }, [])
 
-              function Signup(){
-        const fname = document.getElementById("fname").value;
-        const lname  = document.getElementById("lname").value;
-        const username  = document.getElementById("username").value;
-        const password  = document.getElementById("password").value;
-        console.log("fname", fname)
-        console.log("lname", lname)
-        console.log("username", username)
-        console.log("password", password)
+        function Signup(){
+            const fname = document.getElementById("fname").value;
+            const lname  = document.getElementById("lname").value;
+            const username  = document.getElementById("username").value;
+            const password  = document.getElementById("password").value;
+            const Cpassword  = document.getElementById("confirm password").value;
+
+            if((fname|| lname|| username|| password) === ""){
+                alert("fill out all the field")
+                return;
+            }
+
+            if(password !== Cpassword){
+                alert("Password are not the same");
+            }
+            
+           
+
 
         socket.emit("signup", ({fname,lname,username,password}));
     }
@@ -49,16 +54,21 @@ export default function Signup(){
                 Logging
             </h1>
              <label >firstname: </label> <br></br>
-                <input id = "fname" placeholder="Firstname"></input> <br></br>
+                <input id = "fname" placeholder="Firstname" maxLength={15}></input> <br></br>
 
                 <label >Lastname: </label> <br></br>
-                <input  id = "lname"placeholder="Lastname"></input> <br></br>
+                <input  id = "lname" placeholder="Lastname" maxLength={15}></input> <br></br>
 
                 <label >Username: </label> <br></br>
-                <input  id = "username"placeholder="Username"></input> <br></br>
+                <input  id = "username"placeholder="Username" maxLength={15} ></input> <br></br>
 
                 <label >Password: </label> <br></br>
-                <input id = "password" placeholder="Password"></input> <br></br>
+                <input id = "password" placeholder="Password" type="password" maxLength={255} ></input> <br></br>
+
+                <label >Confirm Password: </label> <br></br>
+                <input id = "confirm password" placeholder="Confirm Password" type="password" maxLength={255} ></input> <br></br>
+
+
     <button onClick={()=>nav("/")}>back
     </button>
     <button onClick={Signup}>Signup</button>
