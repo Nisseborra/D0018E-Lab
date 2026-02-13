@@ -49,9 +49,9 @@ async function Loggin(username, password, socket) {
             return
         }
         if(user.USERNAME === username){
-            console.log("username check:", user.USERNAME === username);
+            console.log("username check:",  username);
             if(user.PASSWORD === password){
-                console.log("password check", user.PASSWORD === user.PASSWORD)
+                console.log("password check",  user.PASSWORD)
                 console.log("loggin success",)
                 socket.emit("logging_success", user.USERNAME)
                 return
@@ -112,10 +112,7 @@ io.on('connection', (socket) => {
 
 
     socket.on("signup",({fname, lname, username, password})=>{
-        console.log("fname", fname)
-        console.log("lname", lname)
-        console.log("username", username)
-        console.log("password", password)
+        
                  
     
         signup(fname, lname, username, password, socket);

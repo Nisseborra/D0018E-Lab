@@ -22,15 +22,27 @@ a:hover {
   color: #535bf2;
 }
 
+
+
 body {
-  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
+}
+
+#center{
+  margin:auto 0;
   place-items: center;
+  align-items: center;
   justify-content: center;
   min-width: 320px;
   min-height: 100vh;
-   
 }
+
 
 h1 {
   font-size: 3.2em;
@@ -56,15 +68,50 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+div[name = "bar"]{
+  position: sticky;
+  top: 0;
+  
+  
+
+}
+
+nav{
+  background-color: red;
+  height: 80px;
+  width: 100%;
+}
+
+nav ul{
+  float: right;
+  
+  margin-right: 20px;
+  
+}
+label[id=navbar]{
+  color: white;
+  font-size: 35px;
+  line-height: 80px;
+  padding:  0 50px;
+  float: left;
+  font-weight: bold;
+}
+
+nav ul li{
+
+  display: inline-block;
+  line-height: 80px;
+  margin: 0 5px;
+}
+
+nav  ul li a{
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+
+  transition: border-color 0.25s;
 }
