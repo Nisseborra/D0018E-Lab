@@ -200,13 +200,22 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+
 --
 -- Dumping data for table `users`
 --
 
+<<<<<<< HEAD
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+=======
+LOCK TABLES `USERS` WRITE;
+/*!40000 ALTER TABLE `USERS` DISABLE KEYS */;
+/*!40000 ALTER TABLE `USERS` ENABLE KEYS */;
+INSERT INTO `USERS` VALUES ('nils', 'Nils', 'Bohlin', '123');
+>>>>>>> a9f07305165824c5c39000a7bac5f993723d061f
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

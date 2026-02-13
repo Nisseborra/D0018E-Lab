@@ -12,7 +12,7 @@ const server = http.createServer(app);
 const pool = mysql.createPool({
     host:'localhost',            //process.env.MYSQL_HOST,
     user:'root' ,               //process.env.MYSQL_USER,
-    password:'root',              //process.env.MYSQL_PASSWORD,
+    password:'Root1234',              //process.env.MYSQL_PASSWORD,
     database:'D0018E'               ///process.env.MYSQL_DATABASE
 }).promise()
 
@@ -28,16 +28,65 @@ async function getItem() {
 
 async function getItem(id) {
     const [rows] = await pool.query(`
-        SELECT * 
-        FROM ITEM
-        WHERE ITEM_ID = ${id}
-        `);
+        SELECT * FROM ITEM WHERE ITEM_ID = ${id}`);
     console.log(rows);
     
     return rows;
 }
 
 getItem(1)
+
+
+
+async function Loggin(username, password, socket) {
+    const [rows]  = await pool.query(`
+        SELECT * 
+        FROM USERS
+        WHERE USERNAME =?`, [username]);
+        const user = rows[0];
+        if(user === undefined){
+            socket.emit("loggin_error", "wrong username or passoword")
+            return
+        }
+        if(user.USERNAME === username){
+            console.log("username check:",  username);
+            if(user.PASSWORD === password){
+                console.log("password check",  user.PASSWORD)
+                console.log("loggin success",)
+                socket.emit("logging_success", user.USERNAME)
+                return
+            }
+        }
+        socket.emit("loggin_error", "wrong username or passoword") 
+   
+    
+}
+
+async function signup(fname, lname, username, password, socket) {
+        const [rows]  = await pool.query(`
+        SELECT * 
+        FROM USERS
+        WHERE USERNAME =?`, [username]);
+        const user = rows[0]
+        if(user !== undefined){
+            socket.emit("signup_error", "Username or account already exist")
+            return
+        }
+
+        await pool.query(`
+        INSERT INTO USERS (USERNAME, FNAME, LNAME, PASSWORD)
+         VALUES (?,? ,?, ?)`, [username, fname, lname,password]
+        );
+
+        //check
+       const [new_user]  = await pool.query(`
+        SELECT * 
+        FROM USERS
+        WHERE USERNAME =?`, [username]);
+        console.log("new_user_success", new_user[0])
+        socket.emit("signup_success", "succeful sign up")
+
+}
 
 
 
@@ -48,21 +97,26 @@ const io = new Server(server, {
     },
 });
 
-const test = ['nils','123']
+
+
 
 io.on('connection', (socket) => {
         console.log('connected:', socket.id);
 
+
+
+
     socket.on("loggin", ({username, Password})=>{
-        console.log("loggin in server")
-            console.log("test user", test[0] == username)
-            console.log("test password",test[1])
-        if(test[0] === username && test[1] === Password){
-            socket.emit("logging_success", username)
-            return
-        }
-        socket.emit("loggin_error", "loggin error")
-    });
+        Loggin(username,Password, socket);
+            } );
+
+
+    socket.on("signup",({fname, lname, username, password})=>{
+        
+                 
+    
+        signup(fname, lname, username, password, socket);
+    })
 
  });
 

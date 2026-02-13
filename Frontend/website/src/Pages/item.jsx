@@ -32,9 +32,10 @@ export default function item(){
 
                     <b>Price:</b>
                     <input  type="number" min="1"></input> <br />
-
-                    <button>Loggin</button>
+                    
                     <button onClick={()=>nav("/")}>back</button>
+                    <button>Loggin</button>
+                   
                 </form>
             </div>
         </div>

@@ -8,12 +8,12 @@ import { useEffect } from "react";
 
 
 export default function Loggin(){
-        const nav = useNavigate();
+    const nav = useNavigate();
      useEffect(()=> {
       
         const loggin_success =(username)=>{
-            alert("Correct")
-            nav("/")
+            alert
+            nav("/home", {state: username})
         }
 
         const loggin_error = (msg)=>{
@@ -25,6 +25,8 @@ export default function Loggin(){
         
 
      return () => {
+        socket.off("logging_success", loggin_success )
+        socket.off("loggin_error", loggin_error)
       
     };
        
@@ -35,23 +37,22 @@ function logg(){
             console.log("loggin in button pressed")
             const username = document.getElementById("log_username").value;
             const Password = document.getElementById("log_password").value;
-
             socket.emit("loggin", {username, Password})
 
         }
 
     return(
-        <div>
+        <div id="center">
             <h1>
                 Loggin
             </h1>
                 <label >Username: </label> <br></br>
-                <input id="log_username" placeholder="Username"></input> <br></br>
+                <input id="log_username" placeholder="Username" maxLength={15} required ></input> <br></br>
 
       <label >Password: </label> <br></br>
-    <input id="log_password" placeholder="Password"></input> <br></br>
+    <input id="log_password" placeholder="Password" type="password" maxLength={15} required></input> <br></br>
     <button onClick={()=>nav("/")}>back</button>
-    <button onClick={logg}>loggin</button>
+    <button onClick={logg} type="sumbit">loggin</button>
         
         </div>
 
