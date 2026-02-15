@@ -10,7 +10,7 @@ export default function homemenu(){
        const nav = useNavigate();
        const location = useLocation();
        const user = location.state;
-
+     
         useEffect(()=> {
         
     
@@ -22,6 +22,8 @@ export default function homemenu(){
     nav("/", {state:null})
    }
 
+
+
     return(
     <div>
     <div className="navbar" >
@@ -29,7 +31,7 @@ export default function homemenu(){
             <label id="navbar">Get ride of stuff</label>
             <ul>
                 <li><button >Bought</button></li>
-                <li><button >Selling</button></li>
+                <li><button onClick={()=> nav("/selling",{state: user})} >Selling</button></li>
                 <li><button>Basket</button></li>
                 <li><button onClick={logout}>Logg out</button></li>
                 <li><a>Loggin as {user} </a></li>

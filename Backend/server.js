@@ -87,6 +87,22 @@ async function signup(fname, lname, username, password, socket) {
         socket.emit("signup_success", "succeful sign up")
 
 }
+async function get_selling_itmes(user, socket) {
+    
+        const [rows]  = await pool.query(`
+            SELECT * 
+            FROM USERS
+            WHERE USERNAME =?`, [user]);
+       
+
+        const user_selling_id =  rows[0].USER_ID
+
+        const [items]  = await pool.query(`
+         SELECT * FROM ITEM WHERE SELLER_ID = ${1}`);
+        console.log("item selling:", items);
+        socket.emit("retive_selling_item", items)
+    
+}
 
 
 
@@ -112,11 +128,14 @@ io.on('connection', (socket) => {
 
 
     socket.on("signup",({fname, lname, username, password})=>{
-        
-                 
-    
         signup(fname, lname, username, password, socket);
-    })
+    });
+
+    socket.on("get_selling_item", (user)=>{
+        get_selling_itmes(user, socket);
+        }
+    );
+
 
  });
 

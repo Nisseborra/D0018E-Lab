@@ -7,6 +7,7 @@ import Loggin from "./Pages/login.jsx";
 import Signup from "./Pages/Signup.jsx";
 import Item from "./Pages/Item.jsx";
 import Homemenu from "./Pages/homemenu.jsx";
+import Selling from "./Pages/Selling.jsx";
 
 export default function app(){
 
@@ -18,6 +19,8 @@ export default function app(){
                         <Route path ="/signup" element={<Signup></Signup>}></Route>
                         <Route path ="/item" element={<Item></Item>}></Route>
                         <Route path="/home" element={<Homemenu></Homemenu>}></Route>
+                        <Route path="/selling" element={<Selling></Selling>}></Route>
+
 
             </Routes>
         

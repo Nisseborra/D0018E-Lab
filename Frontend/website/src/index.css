@@ -72,8 +72,6 @@ div[name = "bar"]{
   position: sticky;
   top: 0;
   
-  
-
 }
 
 nav{
@@ -90,7 +88,7 @@ nav ul{
 }
 label[id=navbar]{
   color: white;
-  font-size: 35px;
+  font-size: 30px;
   line-height: 80px;
   padding:  0 50px;
   float: left;
@@ -114,4 +112,9 @@ nav  ul li a{
   background-color: #1a1a1a;
 
   transition: border-color 0.25s;
+}
+
+
+table{
+  justify-content: center;
 }
