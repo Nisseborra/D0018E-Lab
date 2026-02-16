@@ -48,7 +48,7 @@ async function getCategory() {
     return rows;
 }
 
-getCategory();
+
 
 
 
@@ -60,24 +60,29 @@ async function item(title,image_1,image_2,image_3,description,price,id,socket) {
         WHERE USER_ID = ${id}
 
     `)
-    const username = rows[0].USERNAME;
 
+    //TEMPORARY
+    const[CATEGORY] = await pool.query(`
+        SELECT *
+        FROM CATEGORY
+        WHERE CATEGORY_ID  = ${1}
+
+    `)
+    const username = rows[0].USERNAME;
+    const category = CATEGORY[0].CATEGORY_ID
+    console.log(category);
+    
     const ImageCheck = (img) =>{
         if (img == "") {
             return null
         }
         return img
-    }
-
-
-
-   
-    
+    }    
     
     await pool.query(`
-        INSERT INTO ITEM (USER_ID, TITLE, PRICE, DESCRIPTION,IMAGE_1,IMAGE_2,IMAGE_3,CATEGORY,CREATED_BY)
+        INSERT INTO ITEM (USER_ID, TITLE, PRICE, DESCRIPTION,IMAGE_1,IMAGE_2,IMAGE_3,CATEGORY_ID,CREATED_BY)
         VALUES (?, ?, ?, ?, ?, ?, ?,?,?)`,
-        [id, title, price, description, ImageCheck(image_1), ImageCheck(image_2), ImageCheck(image_3),"s",username]
+        [id, title, price, description, ImageCheck(image_1), ImageCheck(image_2), ImageCheck(image_3),category,username]
         );
 
 
@@ -185,6 +190,9 @@ io.on('connection', (socket) => {
         item(title,image_1,image_2,image_3,description,price,id,socket) 
     }) ;
 
+    socket.on("item", ({title,image_1,image_2,image_3,description,price,id})=>{
+        item(title,image_1,image_2,image_3,description,price,id,socket) 
+    }) ;
     socket.on("get_selling_item", (user)=>{
         get_selling_itmes(user, socket);
         }

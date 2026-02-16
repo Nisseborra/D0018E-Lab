@@ -13,7 +13,9 @@ export default function homemenu(){
        
        
         useEffect(()=> {
-        
+            const category = (title) =>{
+                
+            }
     
               
            }, [])
