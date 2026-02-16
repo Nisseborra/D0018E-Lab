@@ -13,6 +13,8 @@ export default function Loggin(){
       
         const loggin_success =(username)=>{
             alert
+            console.log(username);
+            
             nav("/home", {state: username})
         }
 

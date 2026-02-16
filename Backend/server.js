@@ -5,6 +5,8 @@ const { connect } = require('http2');
 const { disconnect } = require('process');
 const socketIO = require('socket.io');
 const { Server } = require('socket.io');
+const { socket } = require('../Frontend/assets/socket');
+const { log } = require('console');
 
 const app = express();
 const server = http.createServer(app);
@@ -34,7 +36,55 @@ async function getItem(id) {
     return rows;
 }
 
-getItem(1)
+async function getCategory() {
+    const[rows] = await pool.query(`
+        SELECT *
+        FROM CATEGORY
+
+    `)
+    
+    console.log(rows.length);
+    
+    return rows;
+}
+
+getCategory();
+
+
+
+async function item(title,image_1,image_2,image_3,description,price,id,socket) {
+    //check the current username of the the sellers username 
+     const[rows] = await pool.query(`
+        SELECT *
+        FROM USERS
+        WHERE USER_ID = ${id}
+
+    `)
+    const username = rows[0].USERNAME;
+
+    const ImageCheck = (img) =>{
+        if (img == "") {
+            return null
+        }
+        return img
+    }
+
+
+
+   
+    
+    
+    await pool.query(`
+        INSERT INTO ITEM (USER_ID, TITLE, PRICE, DESCRIPTION,IMAGE_1,IMAGE_2,IMAGE_3,CATEGORY,CREATED_BY)
+        VALUES (?, ?, ?, ?, ?, ?, ?,?,?)`,
+        [id, title, price, description, ImageCheck(image_1), ImageCheck(image_2), ImageCheck(image_3),"s",username]
+        );
+
+
+    socket.emit("item_uploaded", "item is uploaded")
+
+    
+}
 
 
 
@@ -53,7 +103,7 @@ async function Loggin(username, password, socket) {
             if(user.PASSWORD === password){
                 console.log("password check",  user.PASSWORD)
                 console.log("loggin success",)
-                socket.emit("logging_success", user.USERNAME)
+                socket.emit("logging_success", [user.USERNAME, user.USER_ID])
                 return
             }
         }
@@ -130,6 +180,10 @@ io.on('connection', (socket) => {
     socket.on("signup",({fname, lname, username, password})=>{
         signup(fname, lname, username, password, socket);
     });
+
+    socket.on("item", ({title,image_1,image_2,image_3,description,price,id})=>{
+        item(title,image_1,image_2,image_3,description,price,id,socket) 
+    }) ;
 
     socket.on("get_selling_item", (user)=>{
         get_selling_itmes(user, socket);

@@ -11,7 +11,8 @@ function startmenu(){
 
             <button onClick={()=> nav("/loggin")}>Logg in</button> <br></br>
             <button onClick={()=> nav("/signup")}>Sign Up</button><br></br>
-            <button onClick={()=> nav("/item")}>Advertisement</button>
+           
+           
         </div>
     )
 }

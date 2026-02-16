@@ -3,7 +3,8 @@
 -- Host: 127.0.0.1    Database: d0018e
 -- ------------------------------------------------------
 -- Server version	8.0.43
-
+CREATE DATABASE IF NOT EXISTS d0018e;
+USE d0018e;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -18,6 +19,7 @@
 --
 -- Table structure for table `basket`
 --
+
 
 DROP TABLE IF EXISTS `basket`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -91,6 +93,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` (`TITLE`) VALUES ('Music'),('Sport and Leisure'),('Books'),('Video games'), ('Decoar'), ('Clothes');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,10 +115,10 @@ CREATE TABLE `item` (
   `IMAGE_3` varchar(255) DEFAULT NULL,
   `CATEGORY` varchar(150) NOT NULL,
   `IS_SOLD` tinyint(1) NOT NULL DEFAULT '0',
-  `CREATED_BY` int DEFAULT NULL,
+  `CREATED_BY` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`ITEM_ID`),
   KEY `USER_ID_idx` (`USER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +127,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,1,'Laptop',7500,'Used laptop',NULL,NULL,NULL,'Electronics',0,NULL),(2,2,'Bike',1200,'Mountain bike',NULL,NULL,NULL,'Sports',0,NULL),(3,1,'Desk',500,'Wooden desk',NULL,NULL,NULL,'Furniture',1,NULL);
+INSERT INTO `item` VALUES (1,1,'Laptop',7500,'Used laptop',NULL,NULL,NULL,'Electronics',0,NULL),(2,2,'Bike',1200,'Mountain bike',NULL,NULL,NULL,'Sports',0,NULL),(3,1,'Desk',500,'Wooden desk',NULL,NULL,NULL,'Furniture',1,NULL),(14,1,'fd',23,'fdf',NULL,NULL,NULL,'s',0,'mudada-3');
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,10 +200,8 @@ CREATE TABLE `users` (
   `PASSWORD` varchar(255) NOT NULL,
   PRIMARY KEY (`USER_ID`),
   UNIQUE KEY `USERNAME` (`USERNAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
-
 
 --
 -- Dumping data for table `users`
@@ -208,6 +209,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'mudada-3','Mudasir','Adan','root');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -220,4 +222,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-13 17:15:20
+-- Dump completed on 2026-02-16 12:37:23

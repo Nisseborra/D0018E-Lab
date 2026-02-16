@@ -10,7 +10,8 @@ export default function homemenu(){
        const nav = useNavigate();
        const location = useLocation();
        const user = location.state;
-     
+       
+       
         useEffect(()=> {
         
     
@@ -33,8 +34,9 @@ export default function homemenu(){
                 <li><button >Bought</button></li>
                 <li><button onClick={()=> nav("/selling",{state: user})} >Selling</button></li>
                 <li><button>Basket</button></li>
+                <li><button onClick={()=> nav("/item" , {state: user})}>Advertisement</button></li>
                 <li><button onClick={logout}>Logg out</button></li>
-                <li><a>Loggin as {user} </a></li>
+                <li><a>Loggin as {user[0]} </a></li>
               
             </ul>
         </nav>
