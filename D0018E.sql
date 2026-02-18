@@ -3,8 +3,7 @@
 -- Host: 127.0.0.1    Database: d0018e
 -- ------------------------------------------------------
 -- Server version	8.0.43
-CREATE DATABASE IF NOT EXISTS d0018e;
-USE d0018e;
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -19,7 +18,6 @@ USE d0018e;
 --
 -- Table structure for table `basket`
 --
-
 
 DROP TABLE IF EXISTS `basket`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -84,7 +82,7 @@ CREATE TABLE `category` (
   PRIMARY KEY (`CATEGORY_ID`),
   KEY `fk_category_item` (`ITEM_ID`),
   CONSTRAINT `fk_category_item` FOREIGN KEY (`ITEM_ID`) REFERENCES `item` (`ITEM_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +91,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` (`TITLE`) VALUES ('Music'),('Sport and Leisure'),('Books'),('Video games'), ('Decoar'), ('Clothes');
+INSERT INTO `category` VALUES (1,'Music',NULL,NULL),(2,'Sport and Leisure',NULL,NULL),(3,'Books',NULL,NULL),(4,'Video games',NULL,NULL),(5,'Decoar',NULL,NULL),(6,'Clothes',NULL,NULL);
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,16 +107,18 @@ CREATE TABLE `item` (
   `USER_ID` int DEFAULT NULL,
   `TITLE` varchar(50) NOT NULL,
   `PRICE` double NOT NULL,
-  `DESCRIPTION` varchar(150) DEFAULT NULL,
+  `DESCRIPTION` varchar(255) DEFAULT NULL,
   `IMAGE_1` varchar(255) DEFAULT NULL,
   `IMAGE_2` varchar(255) DEFAULT NULL,
   `IMAGE_3` varchar(255) DEFAULT NULL,
-  `CATEGORY` varchar(150) NOT NULL,
+  `CATEGORY_ID` int NOT NULL,
   `IS_SOLD` tinyint(1) NOT NULL DEFAULT '0',
   `CREATED_BY` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`ITEM_ID`),
-  KEY `USER_ID_idx` (`USER_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+  KEY `USER_ID_idx` (`USER_ID`),
+  KEY `CATEGORY_ID_idx` (`CATEGORY_ID`),
+  CONSTRAINT `CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `category` (`CATEGORY_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,7 +127,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,1,'Laptop',7500,'Used laptop',NULL,NULL,NULL,'Electronics',0,NULL),(2,2,'Bike',1200,'Mountain bike',NULL,NULL,NULL,'Sports',0,NULL),(3,1,'Desk',500,'Wooden desk',NULL,NULL,NULL,'Furniture',1,NULL),(14,1,'fd',23,'fdf',NULL,NULL,NULL,'s',0,'mudada-3');
+INSERT INTO `item` VALUES (1,1,'Laptop',7500,'Used laptop',NULL,NULL,NULL,1,0,NULL),(2,2,'Bike',1200,'Mountain bike',NULL,NULL,NULL,1,0,NULL),(3,1,'Desk',500,'Wooden desk',NULL,NULL,NULL,1,1,NULL);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,4 +222,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-16 12:37:23
+-- Dump completed on 2026-02-18 13:38:41

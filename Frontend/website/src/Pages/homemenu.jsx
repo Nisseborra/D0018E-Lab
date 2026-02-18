@@ -1,9 +1,9 @@
 
 import { useNavigate} from "react-router-dom";
 import { socket } from "../../../assets/socket";
-import { useEffect } from "react";
+import { useEffect , useRef , useState} from "react";
 import { useLocation } from "react-router-dom";
-
+import Navbar from "../component/Navbar";
 
 
 export default function homemenu(){      
@@ -12,39 +12,38 @@ export default function homemenu(){
        const user = location.state;
        
        
+       
+       const [categories, setCategories] = useState([]);
+       const lista=null;
         useEffect(()=> {
-            const category = (title) =>{
-                
+            socket.emit("category_list");
+
+            const list = (listmap) =>{
+                setCategories(listmap);
             }
-    
-              
-           }, [])
+
+            socket.on("category_map", list);
+            return () => {
+                socket.off("category_map", list )
+            };
+        }, [])
 
       
    function logout(){
     nav("/", {state:null})
    }
+   const found  = categories.find((c) => c.TITLE === "Books")
+   //console.log("FOUND; ", found);
+   
+   
+return (
+    <Navbar user={user} logout={logout}  categories={categories}/>
+)
 
 
+   
 
-    return(
-    <div>
-    <div className="navbar" >
-        <nav>
-            <label id="navbar">Get ride of stuff</label>
-            <ul>
-                <li><button >Bought</button></li>
-                <li><button onClick={()=> nav("/selling",{state: user})} >Selling</button></li>
-                <li><button>Basket</button></li>
-                <li><button onClick={()=> nav("/item" , {state: user})}>Advertisement</button></li>
-                <li><button onClick={logout}>Logg out</button></li>
-                <li><a>Loggin as {user[0]} </a></li>
-              
-            </ul>
-        </nav>
-    </div>
 
-    </div>
-    )
+  
 
 }

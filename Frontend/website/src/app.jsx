@@ -8,6 +8,7 @@ import Signup from "./Pages/Signup.jsx";
 import Item from "./Pages/Item.jsx";
 import Homemenu from "./Pages/homemenu.jsx";
 import Selling from "./Pages/Selling.jsx";
+import Catalog from "./Pages/Catalog.jsx";
 
 export default function app(){
 
@@ -20,6 +21,7 @@ export default function app(){
                         <Route path ="/item" element={<Item></Item>}></Route>
                         <Route path="/home" element={<Homemenu></Homemenu>}></Route>
                         <Route path="/selling" element={<Selling></Selling>}></Route>
+                        <Route path="/catalog" element={<Catalog></Catalog>}></Route>
 
 
             </Routes>

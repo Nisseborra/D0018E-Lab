@@ -74,47 +74,84 @@ div[name = "bar"]{
   
 }
 
-nav{
-  background-color: red;
-  height: 80px;
-  width: 100%;
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #38444d;
 }
 
-nav ul{
-  float: right;
-  
-  margin-right: 20px;
-  
+.navbar li {
+    float: right;
 }
-label[id=navbar]{
-  color: white;
+
+.navbar label{
   font-size: 30px;
-  line-height: 80px;
   padding:  0 50px;
-  float: left;
+    float: left;
   font-weight: bold;
 }
-
-nav ul li{
-
-  display: inline-block;
-  line-height: 80px;
-  margin: 0 5px;
+.navbar li a,
+.navbar .dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
-nav  ul li a{
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
 
-  transition: border-color 0.25s;
+.navbar li a:hover,
+.navbar .dropdown:hover .dropbtn {
+    background-color: red;
 }
+
+.navbar .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+}
+
+.navbar .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+
+
+
+
+.container {
+  display: grid;
+  grid-template-columns: auto auto  auto;
+  background-color: dodgerblue;
+  padding: 20px;
+}
+
+.container div {
+  max-width: 250px;
+  border-style: solid;
+  border-color: #535bf2;
+  background-color: green;
+  
+}
+
+.container img{
+  max-width: 100%;
+}
+
+.container h4{
+  font-size: 1.3em;
+  
+}
+
+
+
 
 
 table{
   justify-content: center;
 }
+

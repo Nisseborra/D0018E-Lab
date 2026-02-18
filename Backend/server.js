@@ -7,6 +7,8 @@ const socketIO = require('socket.io');
 const { Server } = require('socket.io');
 const { socket } = require('../Frontend/assets/socket');
 const { log } = require('console');
+const multer = require('multer');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +20,66 @@ const pool = mysql.createPool({
     database:'D0018E'               ///process.env.MYSQL_DATABASE
 }).promise()
 
+///////////////////// Files to Local public folder
+
+const storage = multer.diskStorage({
+     destination: function (req, file, cb) {
+          cb(null, './Frontend/website/public/uploads')
+    },
+   filename: function (req, file, cb) {
+         cb(null, Date.now() + '-' + file.originalname); // [] gonna need to place the date the image was created later
+   }
+});
+
+//const Filesize= 5*1024*1024; //if we want to add a limiter to the size of image before upload
+
+const upload = multer({ storage: storage})
+
+app.post('/upload', upload.fields([
+    { name: 'image_1', maxCount: 1 },
+    { name: 'image_2', maxCount: 1 },
+    { name: 'image_3', maxCount: 1 }  
+]), async(req, res) => {
+    const userId = Number(req.body.userId);
+    const title = req.body.title;
+    const description = req.body.description;
+ 
+    const price = req.body.price;
+    const image_1 = req.files.image_1?.[0]?.filename||null;
+    const image_2 = req.files.image_2?.[0]?.filename||null;
+    const image_3 = req.files.image_3?.[0]?.filename||null;
+    
+    
+     const[rows] = await pool.query(`
+        SELECT *
+        FROM USERS
+        WHERE USER_ID = ${userId}
+
+    `)
+    //TEMPORARY
+    const[CATEGORY] = await pool.query(`
+        SELECT *
+        FROM CATEGORY
+        WHERE CATEGORY_ID  = ${1}
+
+    `)
+    const username = rows[0].USERNAME;
+
+    
+    const category = CATEGORY[0].CATEGORY_ID
+    await pool.query(`
+        INSERT INTO ITEM  
+        (USER_ID,TITLE, DESCRIPTION, CATEGORY_ID, PRICE, IMAGE_1, IMAGE_2, IMAGE_3,CREATED_BY )
+        VALUES (?, ?, ?, ?, ?, ?, ?,?,?)`,
+        [userId,title, description,category,price,image_1,image_2,image_3,username]
+        );    
+
+     //res.send('File uploaded successfully from multer.');
+     res.redirect('http://localhost:5173/home');
+     
+
+});
+
 //////////////////// DATABASE TABLE GETERS
 
 async function getItem() {
@@ -28,69 +90,38 @@ async function getItem() {
   return rows;
 }
 
-async function getItem(id) {
-    const [rows] = await pool.query(`
-        SELECT * FROM ITEM WHERE ITEM_ID = ${id}`);
+//get the title from each category
+async function category_list(socket) {
+    const[rows] = await pool.query(`
+        SELECT TITLE
+        FROM CATEGORY
+
+
+    `) 
+    //console.log(rows);
+    
+    //console.log(list);
+    socket.emit("category_map", rows);
+    //return rows.length;
+}
+
+
+//get the info of all item TEMPORARY FROM CATEGORY ID 0 from each ITEM for the template of category
+async function category_template(socket) {
+    const[rows] = await pool.query(`
+        SELECT TITLE,PRICE,IMAGE_1
+        FROM ITEM 
+        WHERE CATEGORY_ID = ${1}
+        AND IS_SOLD =  ${0}
+
+
+    `) 
     console.log(rows);
     
-    return rows;
+    //console.log(list);
+    socket.emit("template_map", rows);
+    //return rows.length;
 }
-
-async function getCategory() {
-    const[rows] = await pool.query(`
-        SELECT *
-        FROM CATEGORY
-
-    `)
-    
-    console.log(rows.length);
-    
-    return rows;
-}
-
-
-
-
-
-async function item(title,image_1,image_2,image_3,description,price,id,socket) {
-    //check the current username of the the sellers username 
-     const[rows] = await pool.query(`
-        SELECT *
-        FROM USERS
-        WHERE USER_ID = ${id}
-
-    `)
-
-    //TEMPORARY
-    const[CATEGORY] = await pool.query(`
-        SELECT *
-        FROM CATEGORY
-        WHERE CATEGORY_ID  = ${1}
-
-    `)
-    const username = rows[0].USERNAME;
-    const category = CATEGORY[0].CATEGORY_ID
-    console.log(category);
-    
-    const ImageCheck = (img) =>{
-        if (img == "") {
-            return null
-        }
-        return img
-    }    
-    
-    await pool.query(`
-        INSERT INTO ITEM (USER_ID, TITLE, PRICE, DESCRIPTION,IMAGE_1,IMAGE_2,IMAGE_3,CATEGORY_ID,CREATED_BY)
-        VALUES (?, ?, ?, ?, ?, ?, ?,?,?)`,
-        [id, title, price, description, ImageCheck(image_1), ImageCheck(image_2), ImageCheck(image_3),category,username]
-        );
-
-
-    socket.emit("item_uploaded", "item is uploaded")
-
-    
-}
-
 
 
 async function Loggin(username, password, socket) {
@@ -173,9 +204,8 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
         console.log('connected:', socket.id);
-
-
-
+    
+   
 
     socket.on("loggin", ({username, Password})=>{
         Loggin(username,Password, socket);
@@ -189,15 +219,18 @@ io.on('connection', (socket) => {
     socket.on("item", ({title,image_1,image_2,image_3,description,price,id})=>{
         item(title,image_1,image_2,image_3,description,price,id,socket) 
     }) ;
-
-    socket.on("item", ({title,image_1,image_2,image_3,description,price,id})=>{
-        item(title,image_1,image_2,image_3,description,price,id,socket) 
-    }) ;
+    
     socket.on("get_selling_item", (user)=>{
         get_selling_itmes(user, socket);
         }
     );
 
+    socket.on("category_list", ()=>{
+        category_list(socket) 
+    }) ;
+    socket.on("category_template", ()=>{
+        category_template(socket) //lägg till id
+    }) ;
 
  });
 
