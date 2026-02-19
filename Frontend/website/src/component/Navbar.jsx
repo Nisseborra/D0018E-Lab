@@ -5,6 +5,7 @@ export default function Navbar({ user, logout,categories })  {
     const nav = useNavigate();
     function category_direction(title) {
         const nextState = [user[0],user[1], title];
+        console.log(nextState)
         
         nav("/catalog", { state: nextState });
         
@@ -20,7 +21,7 @@ export default function Navbar({ user, logout,categories })  {
                 
                 <li><button onClick={logout}>Logg out</button></li>
                 <li><button onClick={()=> nav("/item" , {state: user})}>Advertisement</button></li>
-                <li><button>Basket</button></li>
+                <li><button onClick={()=> nav("/basket", {state: user})}>Basket</button></li>
                 <li><button onClick={()=> nav("/selling",{state: user})} >Selling</button></li>
                 <li><button >Bought</button></li>
                 <li className="dropdown">

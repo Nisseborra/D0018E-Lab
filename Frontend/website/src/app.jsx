@@ -9,6 +9,7 @@ import Item from "./Pages/Item.jsx";
 import Homemenu from "./Pages/homemenu.jsx";
 import Selling from "./Pages/Selling.jsx";
 import Catalog from "./Pages/Catalog.jsx";
+import Basket from "./Pages/Basket.jsx";
 
 export default function app(){
 
@@ -22,6 +23,7 @@ export default function app(){
                         <Route path="/home" element={<Homemenu></Homemenu>}></Route>
                         <Route path="/selling" element={<Selling></Selling>}></Route>
                         <Route path="/catalog" element={<Catalog></Catalog>}></Route>
+                         <Route path="/basket" element={<Basket></Basket>}></Route>
 
 
             </Routes>

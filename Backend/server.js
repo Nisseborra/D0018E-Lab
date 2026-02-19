@@ -109,7 +109,7 @@ async function category_list(socket) {
 //get the info of all item TEMPORARY FROM CATEGORY ID 0 from each ITEM for the template of category
 async function category_template(socket) {
     const[rows] = await pool.query(`
-        SELECT TITLE,PRICE,IMAGE_1
+        SELECT TITLE,PRICE,IMAGE_1,ITEM_ID
         FROM ITEM 
         WHERE CATEGORY_ID = ${1}
         AND IS_SOLD =  ${0}
@@ -173,23 +173,112 @@ async function signup(fname, lname, username, password, socket) {
         socket.emit("signup_success", "succeful sign up")
 
 }
+
 async function get_selling_itmes(user, socket) {
-    
-        const [rows]  = await pool.query(`
-            SELECT * 
-            FROM USERS
-            WHERE USERNAME =?`, [user]);
-       
-
-        const user_selling_id =  rows[0].USER_ID
-
         const [items]  = await pool.query(`
-         SELECT * FROM ITEM WHERE SELLER_ID = ${1}`);
+         SELECT * FROM ITEM WHERE USER_ID = ${user[1]}`);
         console.log("item selling:", items);
         socket.emit("retive_selling_item", items)
-    
 }
 
+async function Basket(user, socket) {
+     const [baksetid] = await pool.query(`
+        SELECT *
+        FROM BASKET
+        WHERE USER_ID =? `, [user[1]]);
+        const basket = baksetid[0]
+
+    if(basket === undefined){
+        socket.emit("failed get basket", "add to basket")
+        return;
+    }
+
+    // går igenom 
+    const [items] = await pool.query(`
+        SELECT *
+        FROM ITEM
+        JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
+        WHERE BASKET_ID =?`, [basket.BASKET_ID]);
+        console.log("Basket_item:", items)
+
+        socket.emit("basket_items", items)
+        return
+
+    };
+
+
+async function addbasket(user, item, socket) {
+        // kolla om det finns en basket
+        //kollar IS_ORDER = 0 och USER_ID FÖR BASKET
+        const [baksetid] = await pool.query(`
+        SELECT *
+        FROM BASKET
+        WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
+        const basket = baksetid[0]
+        console.log(basket)
+        if(basket === undefined ){
+            console.log("basket dont exist for ", user[1])
+            //SKAPAR BASKET
+             await pool.query(`
+            INSERT INTO BASKET (IS_ORDERD, USER_ID)
+                VALUES (?,? )`, [0, user[1]]); 
+            return addbasket(user,item, socket);
+            }
+        if(item.IS_SOLD ===1){
+            socket.emit("item_error", "item already sold")
+            return
+        }
+        //kollar om item är readadn i basket
+         const [check_item_in_basket] = await pool.query(`
+        SELECT *
+        FROM BASKET_ITEM
+        WHERE BASKET_ID = ? AND ITEM_ID =? ` , [basket.BASKET_ID, item.ITEM_ID]);
+        const check = check_item_in_basket[0]
+        if(!(check === undefined)){
+            socket.emit("item_error", "item already in basket")
+            return
+        }
+
+        // ska också lägga till så man inte kan köpa sin egna product
+
+        pool.query(`
+            INSERT INTO BASKET_item (Basket_ID, ITEM_ID)
+                VALUES (?,? )`, [basket.BASKET_ID, item.ITEM_ID]); 
+        
+        socket.emit("item_addded", item)
+}
+
+async function RemoveItem(user, item, socket) {
+        const [baksetid] = await pool.query(`
+            SELECT *
+            FROM BASKET
+            WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
+        const basket = baksetid[0]
+        console.log(basket)
+        if(basket === undefined ){
+            console.log("DELETE BUG")
+            return
+        }
+
+        await pool.query(`
+            DELETE FROM BASKET_item WHERE BASKET_ID =? AND ITEM_ID =?`, [basket.BASKET_ID, item.ITEM_ID]);
+
+        
+        console.log("delet success")
+        
+         const [items] = await pool.query(`
+        SELECT *
+        FROM ITEM
+        JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
+        WHERE BASKET_ID =?`, [basket.BASKET_ID]);
+        console.log("Basket_item:", items)
+
+        socket.emit("basket_items", items)
+        return
+            
+
+    
+}
 
 
 const io = new Server(server, {
@@ -225,12 +314,31 @@ io.on('connection', (socket) => {
         }
     );
 
+    socket.on("getBasket", (user)=>{
+        Basket(user,socket)
+    })
+    socket.on("removeITEM",async ({user,item})=>{
+        console.log(user)
+          console.log(item)
+          RemoveItem(user, item, socket)
+    })
+
+    socket.on("addBasket", ({user, item})=>{
+
+        console.log("addbasket user:", user)
+         console.log("addbasket item:", item)
+        addbasket(user, item, socket)
+    })
+
     socket.on("category_list", ()=>{
         category_list(socket) 
     }) ;
     socket.on("category_template", ()=>{
         category_template(socket) //lägg till id
     }) ;
+
+
+
 
  });
 
