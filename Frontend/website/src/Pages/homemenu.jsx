@@ -23,16 +23,14 @@ export default function homemenu(){
             }
 
             const itemsold =(msg)=>{
+                
                 alert(msg)
             }
 
-            const item_added = (item)=>{
-                alert(item.TITLE, "have been added to your basket")
-            }
-
+          
 
             socket.on("item_already_sold",itemsold)
-            socket.on("item_added",item_added)
+           
     
             socket.on("category_map", list);
             return () => {

@@ -5,11 +5,9 @@ import { socket } from "../../../assets/socket"
 
 //creating a table for each product card for the items of the category
 export default function  Catalog_table({ template, user }) {
-    console.log(template)
 
     function additem(user, item){
-        console.log(user)
-        console.log(item)
+       
         socket.emit("addBasket", ({user,item}))
 
     }

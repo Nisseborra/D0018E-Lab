@@ -47,7 +47,6 @@ export default function basket() {
     const nav = useNavigate();
     const location = useLocation();
     const user = location.state;
-  
    
 
 
@@ -68,7 +67,6 @@ export default function basket() {
         }
 
         const get_items = (items)=>{
-            console.log("revive items:", items)
             setitems(items)
         }
         
@@ -94,8 +92,6 @@ export default function basket() {
         }, 0)
 
     function removeITEM(user, item){
-        console.log(user)
-        console.log(item)
         socket.emit("removeITEM",({user, item}))
     }
 
@@ -112,9 +108,6 @@ return(
            
         </tr>
         </thead>
-
-
-       
         <tbody>
             {Object.values(items).map((item, i) =>(
                 <tr key ={i}>

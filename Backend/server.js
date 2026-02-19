@@ -126,7 +126,7 @@ async function category_template(socket) {
 
 async function Loggin(username, password, socket) {
     const [rows]  = await pool.query(`
-        SELECT * 
+        SELECT USERNAME, PASSWORD, USER_ID
         FROM USERS
         WHERE USERNAME =?`, [username]);
         const user = rows[0];
@@ -134,14 +134,10 @@ async function Loggin(username, password, socket) {
             socket.emit("loggin_error", "wrong username or passoword")
             return
         }
-        if(user.USERNAME === username){
-            console.log("username check:",  username);
-            if(user.PASSWORD === password){
-                console.log("password check",  user.PASSWORD)
+        if(user.USERNAME === username && user.PASSWORD === password){
                 console.log("loggin success",)
                 socket.emit("logging_success", [user.USERNAME, user.USER_ID])
                 return
-            }
         }
         socket.emit("loggin_error", "wrong username or passoword") 
    
@@ -150,7 +146,7 @@ async function Loggin(username, password, socket) {
 
 async function signup(fname, lname, username, password, socket) {
         const [rows]  = await pool.query(`
-        SELECT * 
+        SELECT USERNAME
         FROM USERS
         WHERE USERNAME =?`, [username]);
         const user = rows[0]
@@ -164,12 +160,6 @@ async function signup(fname, lname, username, password, socket) {
          VALUES (?,? ,?, ?)`, [username, fname, lname,password]
         );
 
-        //check
-       const [new_user]  = await pool.query(`
-        SELECT * 
-        FROM USERS
-        WHERE USERNAME =?`, [username]);
-        console.log("new_user_success", new_user[0])
         socket.emit("signup_success", "succeful sign up")
 
 }
@@ -177,7 +167,6 @@ async function signup(fname, lname, username, password, socket) {
 async function get_selling_itmes(user, socket) {
         const [items]  = await pool.query(`
          SELECT * FROM ITEM WHERE USER_ID = ${user[1]}`);
-        console.log("item selling:", items);
         socket.emit("retive_selling_item", items)
 }
 
@@ -195,11 +184,10 @@ async function Basket(user, socket) {
 
     // går igenom 
     const [items] = await pool.query(`
-        SELECT *
+        SELECT TITLE, PRICE,ITEM.ITEM_ID
         FROM ITEM
         JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
         WHERE BASKET_ID =?`, [basket.BASKET_ID]);
-        console.log("Basket_item:", items)
 
         socket.emit("basket_items", items)
         return
@@ -214,7 +202,7 @@ async function addbasket(user, item, socket) {
         SELECT *
         FROM BASKET
         WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
-        const basket = baksetid[0]
+        var basket = baksetid[0]
         console.log(basket)
         if(basket === undefined ){
             console.log("basket dont exist for ", user[1])
@@ -222,13 +210,22 @@ async function addbasket(user, item, socket) {
              await pool.query(`
             INSERT INTO BASKET (IS_ORDERD, USER_ID)
                 VALUES (?,? )`, [0, user[1]]); 
-            return addbasket(user,item, socket);
+
+            const [baksetid] = await pool.query(`
+            SELECT *
+                FROM BASKET
+                WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
+
+            basket = baksetid[0]
+
+
             }
+
         if(item.IS_SOLD ===1){
             socket.emit("item_error", "item already sold")
             return
         }
-        //kollar om item är readadn i basket
+        //kollar om item är readan i basket
          const [check_item_in_basket] = await pool.query(`
         SELECT *
         FROM BASKET_ITEM
@@ -241,11 +238,12 @@ async function addbasket(user, item, socket) {
 
         // ska också lägga till så man inte kan köpa sin egna product
 
-        pool.query(`
+        await pool.query(`
             INSERT INTO BASKET_item (Basket_ID, ITEM_ID)
                 VALUES (?,? )`, [basket.BASKET_ID, item.ITEM_ID]); 
         
-        socket.emit("item_addded", item)
+        socket.emit("item_added", (item.TITLE))
+        return
 }
 
 async function RemoveItem(user, item, socket) {
@@ -336,8 +334,6 @@ io.on('connection', (socket) => {
     socket.on("category_template", ()=>{
         category_template(socket) //lägg till id
     }) ;
-
-
 
 
  });
