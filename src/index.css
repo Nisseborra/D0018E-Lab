@@ -1,0 +1,157 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+
+
+body {
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#center{
+  margin:auto 0;
+  place-items: center;
+  align-items: center;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+div[name = "bar"]{
+  position: sticky;
+  top: 0;
+  
+}
+
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #38444d;
+}
+
+.navbar li {
+    float: right;
+}
+
+.navbar label{
+  font-size: 30px;
+  padding:  0 50px;
+    float: left;
+  font-weight: bold;
+}
+.navbar li a,
+.navbar .dropbtn {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+
+.navbar li a:hover,
+.navbar .dropdown:hover .dropbtn {
+    background-color: red;
+}
+
+.navbar .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+}
+
+.navbar .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+
+
+
+
+.container {
+  display: grid;
+  grid-template-columns: auto auto  auto;
+  background-color: dodgerblue;
+  padding: 20px;
+}
+
+.container div {
+  max-width: 250px;
+  border-style: solid;
+  border-color: #535bf2;
+  background-color: green;
+  
+}
+
+.container img{
+  max-width: 100%;
+}
+
+.container h4{
+  font-size: 1.3em;
+  
+}
+
+
+
+
+
+table{
+  justify-content: center;
+}
+
