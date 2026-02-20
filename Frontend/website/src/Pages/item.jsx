@@ -34,25 +34,24 @@ export default function item(){
     };
     },[]);
     //console.log(categories);
-    
 
+
+    //Checks if any of title,description,price and image 1 has been filled
     function fields(event) {
         
         const title = document.getElementById('title').value;
         const image_1 = document.getElementById('imageUpload1').files[0];
-        const image_2 = document.getElementById('imageUpload2').files[0];
-        const image_3 = document.getElementById('imageUpload3').files[0];
         const description = document.getElementById('description').value;
         const price = document.getElementById('price').value;
         const id = user[1];
         if (!title || !description || !price || !image_1) {
             event.preventDefault();
             alert("Fill out all the fields");
-
+            nav("/item",{state: user})
             return;
         }
        
-        //nav("/home",{state: user})
+        //
        
     }
 
