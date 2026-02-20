@@ -5,8 +5,8 @@ export default function Navbar({ user, logout,categories })  {
     const nav = useNavigate();
     function category_direction(ID) {
         const nextState = [user[0],user[1], ID];
-        //console.log("navbar:", nextState)
-        
+        console.log("navbar:", nextState)
+        location.reload(); //reload page
         nav("/catalog", { state: nextState });
         
         
