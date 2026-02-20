@@ -122,7 +122,7 @@ async function card_template(id,socket) {
     console.log(id);
     
     const[rows] = await pool.query(`
-        SELECT TITLE,PRICE,IMAGE_1,DESCRIPTION
+        SELECT TITLE,PRICE,IMAGE_1,DESCRIPTION,ITEM_ID
         FROM ITEM 
         WHERE ITEM_ID = ${id}
         

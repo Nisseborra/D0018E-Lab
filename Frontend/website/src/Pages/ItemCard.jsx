@@ -20,13 +20,32 @@ export default function ItemCard(){
         }
         const template = (map) =>{
             setCard(map);
-        }      
+        } 
+        
+        
+        const itemadded =(item)=>{
+            console.log("added item:", item)
+            
+            alert((item + " added to basket"))
+        }
+        const itemerror =(msg)=>{
+            console.log("itemerror")
+            alert(msg)
+
+        }
+
+        socket.on("item_added", itemadded)
+        socket.on("item_error", itemerror)
+
         socket.on("category_map", list);
         socket.on("card", template);
         return () => {
             socket.off("category_map", list )
             socket.off("card", template);
+            socket.off("item_added", itemadded)
+           socket.off("item_error", itemerror)
         };
+        
     }, [])
     function logout(){
     nav("/", {state:null})

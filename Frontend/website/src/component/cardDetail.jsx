@@ -2,7 +2,11 @@ import { useNavigate} from "react-router-dom";
 import { socket } from "../../../assets/socket";
 export default function  CardDetail({ card, user }) {
 console.log("asdsad :",card);
+    function additem(user, item){
+       
+        socket.emit("addBasket", ({user,item}))
 
+    }
     
    return <div className="card">
    {
@@ -16,6 +20,10 @@ console.log("asdsad :",card);
                 <div><p>{card.DESCRIPTION}</p></div>
                 <div>
                     <span>{card.PRICE}</span>
+                </div>
+                <div>
+                    <button onClick={()=>additem(user, card)}>add to basket</button>
+                    
                 </div>
                 
 

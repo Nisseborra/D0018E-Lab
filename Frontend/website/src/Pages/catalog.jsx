@@ -25,9 +25,12 @@ export default function catalog(){
         
         socket.emit("category_list");
         socket.emit("category_template", user[2]);//temporary checks only id 0 for categiry id 
+
+        //set an array for the categorys for navbar
         const list = (listmap) =>{
             setCategories(listmap);
         }
+        //set an array for all the item for the category
         const template = (listmap) =>{
             setItem(listmap);
         }
