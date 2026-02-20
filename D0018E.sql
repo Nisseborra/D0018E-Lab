@@ -16,95 +16,95 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `basket`
+-- Table structure for table `BASKET`
 --
 
-DROP TABLE IF EXISTS `basket`;
+DROP TABLE IF EXISTS `BASKET`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `basket` (
+CREATE TABLE `BASKET` (
   `BASKET_ID` int NOT NULL AUTO_INCREMENT,
   `IS_ORDERD` tinyint(1) DEFAULT '0',
   `USER_ID` int DEFAULT NULL,
   PRIMARY KEY (`BASKET_ID`),
-  KEY `fk_basket_user` (`USER_ID`),
-  CONSTRAINT `fk_basket_user` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`USER_ID`)
+  KEY `fk_BASKET_user` (`USER_ID`),
+  CONSTRAINT `fk_BASKET_user` FOREIGN KEY (`USER_ID`) REFERENCES `USERS` (`USER_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `basket`
+-- Dumping data for table `BASKET`
 --
 
-LOCK TABLES `basket` WRITE;
-/*!40000 ALTER TABLE `basket` DISABLE KEYS */;
-INSERT INTO `basket` VALUES (1,0,1);
-/*!40000 ALTER TABLE `basket` ENABLE KEYS */;
+LOCK TABLES `BASKET` WRITE;
+/*!40000 ALTER TABLE `BASKET` DISABLE KEYS */;
+INSERT INTO `BASKET` VALUES (1,0,1);
+/*!40000 ALTER TABLE `BASKET` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `basket_item`
+-- Table structure for table `BASKET_ITEM`
 --
 
-DROP TABLE IF EXISTS `basket_item`;
+DROP TABLE IF EXISTS `BASKET_ITEM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `basket_item` (
+CREATE TABLE `BASKET_ITEM` (
   `BASKET_ID` int DEFAULT NULL,
   `ITEM_ID` int DEFAULT NULL,
-  KEY `fk_bi_basket` (`BASKET_ID`),
-  KEY `fk_bi_item` (`ITEM_ID`),
-  CONSTRAINT `fk_bi_basket` FOREIGN KEY (`BASKET_ID`) REFERENCES `basket` (`BASKET_ID`),
-  CONSTRAINT `fk_bi_item` FOREIGN KEY (`ITEM_ID`) REFERENCES `item` (`ITEM_ID`)
+  KEY `fk_bi_BASKET` (`BASKET_ID`),
+  KEY `fk_bi_ITEM` (`ITEM_ID`),
+  CONSTRAINT `fk_bi_BASKET` FOREIGN KEY (`BASKET_ID`) REFERENCES `BASKET` (`BASKET_ID`),
+  CONSTRAINT `fk_bi_ITEM` FOREIGN KEY (`ITEM_ID`) REFERENCES `ITEM` (`ITEM_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `basket_item`
+-- Dumping data for table `BASKET_ITEM`
 --
 
-LOCK TABLES `basket_item` WRITE;
-/*!40000 ALTER TABLE `basket_item` DISABLE KEYS */;
-INSERT INTO `basket_item` VALUES (1,60),(1,NULL),(1,NULL),(1,62);
-/*!40000 ALTER TABLE `basket_item` ENABLE KEYS */;
+LOCK TABLES `BASKET_ITEM` WRITE;
+/*!40000 ALTER TABLE `BASKET_ITEM` DISABLE KEYS */;
+INSERT INTO `BASKET_ITEM` VALUES (1,60),(1,NULL),(1,NULL),(1,62);
+/*!40000 ALTER TABLE `BASKET_ITEM` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `category`
+-- Table structure for table `CATEGORY`
 --
 
-DROP TABLE IF EXISTS `category`;
+DROP TABLE IF EXISTS `CATEGORY`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `category` (
+CREATE TABLE `CATEGORY` (
   `CATEGORY_ID` int NOT NULL AUTO_INCREMENT,
   `TITLE` varchar(50) DEFAULT NULL,
   `ITEM_COUNT` int DEFAULT NULL,
   `ITEM_ID` int DEFAULT NULL,
   PRIMARY KEY (`CATEGORY_ID`),
-  KEY `fk_category_item` (`ITEM_ID`),
-  CONSTRAINT `fk_category_item` FOREIGN KEY (`ITEM_ID`) REFERENCES `item` (`ITEM_ID`)
+  KEY `fk_CATEGORY_ITEM` (`ITEM_ID`),
+  CONSTRAINT `fk_CATEGORY_ITEM` FOREIGN KEY (`ITEM_ID`) REFERENCES `ITEM` (`ITEM_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `category`
+-- Dumping data for table `CATEGORY`
 --
 
-LOCK TABLES `category` WRITE;
-/*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Music',NULL,NULL),(2,'Sport and Leisure',NULL,NULL),(3,'Books',NULL,NULL),(4,'Video games',NULL,NULL),(5,'Decoar',NULL,NULL),(6,'Clothes',NULL,NULL);
-/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+LOCK TABLES `CATEGORY` WRITE;
+/*!40000 ALTER TABLE `CATEGORY` DISABLE KEYS */;
+INSERT INTO `CATEGORY` VALUES (1,'Music',NULL,NULL),(2,'Sport and Leisure',NULL,NULL),(3,'Books',NULL,NULL),(4,'Video games',NULL,NULL),(5,'Decoar',NULL,NULL),(6,'Clothes',NULL,NULL);
+/*!40000 ALTER TABLE `CATEGORY` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `item`
+-- Table structure for table `ITEM`
 --
 
-DROP TABLE IF EXISTS `item`;
+DROP TABLE IF EXISTS `ITEM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `item` (
+CREATE TABLE `ITEM` (
   `ITEM_ID` int NOT NULL AUTO_INCREMENT,
   `USER_ID` int DEFAULT NULL,
   `TITLE` varchar(50) NOT NULL,
@@ -119,82 +119,82 @@ CREATE TABLE `item` (
   PRIMARY KEY (`ITEM_ID`),
   KEY `USER_ID_idx` (`USER_ID`),
   KEY `CATEGORY_ID_idx` (`CATEGORY_ID`),
-  CONSTRAINT `CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `category` (`CATEGORY_ID`)
+  CONSTRAINT `CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `CATEGORY` (`CATEGORY_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `item`
+-- Dumping data for table `ITEM`
 --
 
-LOCK TABLES `item` WRITE;
-/*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (62,NULL,'test',123.00,'test','1771572898509-946ab966a87f1956044f751bf7a66b7f.jpg',NULL,NULL,1,0,'mudada-3');
-/*!40000 ALTER TABLE `item` ENABLE KEYS */;
+LOCK TABLES `ITEM` WRITE;
+/*!40000 ALTER TABLE `ITEM` DISABLE KEYS */;
+INSERT INTO `ITEM` VALUES (62,NULL,'test',123.00,'test','1771572898509-946ab966a87f1956044f751bf7a66b7f.jpg',NULL,NULL,1,0,'mudada-3');
+/*!40000 ALTER TABLE `ITEM` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `order`
+-- Table structure for table `ORDER`
 --
 
-DROP TABLE IF EXISTS `order`;
+DROP TABLE IF EXISTS `ORDER`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order` (
+CREATE TABLE `ORDER` (
   `ORDER_ID` int NOT NULL AUTO_INCREMENT,
   `STATUS` tinyint NOT NULL,
   `BASKET_ID` int DEFAULT NULL,
   PRIMARY KEY (`ORDER_ID`),
   KEY `BASKET_ID_idx` (`BASKET_ID`),
-  CONSTRAINT `BASKET_ID` FOREIGN KEY (`BASKET_ID`) REFERENCES `basket` (`BASKET_ID`)
+  CONSTRAINT `BASKET_ID` FOREIGN KEY (`BASKET_ID`) REFERENCES `BASKET` (`BASKET_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `order`
+-- Dumping data for table `ORDER`
 --
 
-LOCK TABLES `order` WRITE;
-/*!40000 ALTER TABLE `order` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order` ENABLE KEYS */;
+LOCK TABLES `ORDER` WRITE;
+/*!40000 ALTER TABLE `ORDER` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ORDER` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `order_item`
+-- Table structure for table `ORDER_ITEM`
 --
 
-DROP TABLE IF EXISTS `order_item`;
+DROP TABLE IF EXISTS `ORDER_ITEM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order_item` (
+CREATE TABLE `ORDER_ITEM` (
   `PRICE_SUM` int NOT NULL,
   `QUANTITY` int NOT NULL,
   `ORDER_ID` int DEFAULT NULL,
   `ITEM_ID` int DEFAULT NULL,
   KEY `ORDER_INT_idx` (`ORDER_ID`),
   KEY `ITEM_ID_idx` (`ITEM_ID`),
-  CONSTRAINT `ITEM_ID` FOREIGN KEY (`ITEM_ID`) REFERENCES `item` (`ITEM_ID`),
-  CONSTRAINT `ORDER_INT` FOREIGN KEY (`ORDER_ID`) REFERENCES `order` (`ORDER_ID`)
+  CONSTRAINT `ITEM_ID` FOREIGN KEY (`ITEM_ID`) REFERENCES `ITEM` (`ITEM_ID`),
+  CONSTRAINT `ORDER_INT` FOREIGN KEY (`ORDER_ID`) REFERENCES `ORDER` (`ORDER_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `order_item`
+-- Dumping data for table `ORDER_ITEM`
 --
 
-LOCK TABLES `order_item` WRITE;
-/*!40000 ALTER TABLE `order_item` DISABLE KEYS */;
-/*!40000 ALTER TABLE `order_item` ENABLE KEYS */;
+LOCK TABLES `ORDER_ITEM` WRITE;
+/*!40000 ALTER TABLE `ORDER_ITEM` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ORDER_ITEM` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `users`
+-- Table structure for table `USERS`
 --
 
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `USERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
+CREATE TABLE `USERS` (
   `USER_ID` int NOT NULL AUTO_INCREMENT,
   `USERNAME` varchar(15) NOT NULL,
   `FNAME` varchar(15) NOT NULL,
@@ -206,13 +206,13 @@ CREATE TABLE `users` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `USERS`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'mudada-3','Mudasir','Adan','root');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+LOCK TABLES `USERS` WRITE;
+/*!40000 ALTER TABLE `USERS` DISABLE KEYS */;
+INSERT INTO `USERS` VALUES (1,'mudada-3','Mudasir','Adan','root');
+/*!40000 ALTER TABLE `USERS` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
