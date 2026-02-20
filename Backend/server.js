@@ -21,7 +21,7 @@ const pool = mysql.createPool({
 }).promise()
 
 ///////////////////// Files to Local public folder
-
+ //gives you full control on storing files to disk.
 const storage = multer.diskStorage({
      destination: function (req, file, cb) {
           cb(null, './Frontend/website/public/uploads')
@@ -31,7 +31,7 @@ const storage = multer.diskStorage({
    }
 });
 
-//const Filesize= 5*1024*1024; //if we want to add a limiter to the size of image before upload
+
 
 const upload = multer({ storage: storage})
 
@@ -40,11 +40,14 @@ app.post('/upload', upload.fields([
     { name: 'image_2', maxCount: 1 },
     { name: 'image_3', maxCount: 1 }  
 ]), async(req, res) => {
+
+    //reaquestion the data and files from the form
     const userId = Number(req.body.userId);
     const title = req.body.title;
     const description = req.body.description;
- 
-    const price = req.body.price;
+    const categoryID = Number(req.body.categoryID);
+    
+    const price = Number(req.body.price);
     const image_1 = req.files.image_1?.[0]?.filename||null;
     const image_2 = req.files.image_2?.[0]?.filename||null;
     const image_3 = req.files.image_3?.[0]?.filename||null;
@@ -56,28 +59,20 @@ app.post('/upload', upload.fields([
         WHERE USER_ID = ${userId}
 
     `)
-    //TEMPORARY
-    const[CATEGORY] = await pool.query(`
-        SELECT *
-        FROM CATEGORY
-        WHERE CATEGORY_ID  = ${1}
-
-    `)
     const username = rows[0].USERNAME;
 
     
-    const category = CATEGORY[0].CATEGORY_ID
+    //insert the detail into item
     await pool.query(`
         INSERT INTO ITEM  
-        (USER_ID,TITLE, DESCRIPTION, CATEGORY_ID, PRICE, IMAGE_1, IMAGE_2, IMAGE_3,CREATED_BY )
-        VALUES (?, ?, ?, ?, ?, ?, ?,?,?)`,
-        [userId,title, description,category,price,image_1,image_2,image_3,username]
+        (TITLE, DESCRIPTION, CATEGORY_ID, PRICE, IMAGE_1, IMAGE_2, IMAGE_3,CREATED_BY )
+        VALUES ( ?, ?, ?, ?, ?, ?,?,?)`,
+        [title, description,categoryID,price,image_1,image_2,image_3,username]
         );    
 
      //res.send('File uploaded successfully from multer.');
-     res.redirect('http://localhost:5173/home');
+     //res.redirect('http://localhost:5173/home');
      
-
 });
 
 //////////////////// DATABASE TABLE GETERS
@@ -93,7 +88,7 @@ async function getItem() {
 //get the title from each category
 async function category_list(socket) {
     const[rows] = await pool.query(`
-        SELECT TITLE
+        SELECT TITLE,CATEGORY_ID
         FROM CATEGORY
 
 
@@ -107,22 +102,39 @@ async function category_list(socket) {
 
 
 //get the info of all item TEMPORARY FROM CATEGORY ID 0 from each ITEM for the template of category
-async function category_template(socket) {
+async function category_template(id,socket) {
     const[rows] = await pool.query(`
         SELECT TITLE,PRICE,IMAGE_1,ITEM_ID
         FROM ITEM 
-        WHERE CATEGORY_ID = ${1}
+        WHERE CATEGORY_ID = ${id}
         AND IS_SOLD =  ${0}
+
+
+    `) 
+    //console.log(rows);
+    
+    //console.log(list);
+    socket.emit("template_map", rows);
+    //return rows.length;
+}
+//get the info of the item FROM ITEM ID 
+async function card_template(id,socket) {
+    console.log(id);
+    
+    const[rows] = await pool.query(`
+        SELECT TITLE,PRICE,IMAGE_1,DESCRIPTION
+        FROM ITEM 
+        WHERE ITEM_ID = ${id}
+        
 
 
     `) 
     console.log(rows);
     
     //console.log(list);
-    socket.emit("template_map", rows);
+    socket.emit("card", rows);
     //return rows.length;
 }
-
 
 async function Loggin(username, password, socket) {
     const [rows]  = await pool.query(`
@@ -203,7 +215,7 @@ async function addbasket(user, item, socket) {
         FROM BASKET
         WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
         var basket = baksetid[0]
-        console.log(basket)
+        //console.log(basket)
         if(basket === undefined ){
             console.log("basket dont exist for ", user[1])
             //SKAPAR BASKET
@@ -331,8 +343,11 @@ io.on('connection', (socket) => {
     socket.on("category_list", ()=>{
         category_list(socket) 
     }) ;
-    socket.on("category_template", ()=>{
-        category_template(socket) //lägg till id
+    socket.on("category_template", (id)=>{
+        category_template(id,socket) 
+    }) ;
+    socket.on("card_template", (id)=>{
+        card_template(id,socket) 
     }) ;
 
 

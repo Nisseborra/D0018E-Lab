@@ -11,16 +11,20 @@ export default function catalog(){
     const user = location.state;
     const [categories, setCategories] = useState([]);
     const [item, setItem] = useState([]);
-
+    const itemRef = useRef([]);
+    //console.log(user);
+    
     const lista=null;
 
-   
+  //  console.log(user);
+    
+    
     
     
     useEffect(()=> {
         
         socket.emit("category_list");
-        socket.emit("category_template");//temporary checks only id 0 for categiry id 
+        socket.emit("category_template", user[2]);//temporary checks only id 0 for categiry id 
         const list = (listmap) =>{
             setCategories(listmap);
         }
@@ -38,11 +42,12 @@ export default function catalog(){
             alert(msg)
 
         }
-    
+        
         socket.on("category_map", list);
         socket.on("template_map", template);
         socket.on("item_added", itemadded)
         socket.on("item_error", itemerror)
+        
         return () => {
             socket.off("category_map", list )
             socket.off("template_map", template);

@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ user, logout,categories })  {
     const nav = useNavigate();
-    function category_direction(title) {
-        const nextState = [user[0],user[1], title];
-        console.log("navbar:", nextState)
+    function category_direction(ID) {
+        const nextState = [user[0],user[1], ID];
+        //console.log("navbar:", nextState)
         
         nav("/catalog", { state: nextState });
         
@@ -17,7 +17,7 @@ export default function Navbar({ user, logout,categories })  {
         
         <ul>
             <label>Get ride of stuff</label>
-            <li><a>Loggin as {user[0]} </a></li>
+            <li><button onClick={()=> nav("/profile",{state: user})} >Loggin as {user[0]}</button></li>
                 
                 <li><button onClick={logout}>Logg out</button></li>
                 <li><button onClick={()=> nav("/item" , {state: user})}>Advertisement</button></li>
@@ -31,7 +31,7 @@ export default function Navbar({ user, logout,categories })  {
                             categories.map((categories,i) => {
                                 return (
                                     <div key={i}>
-                                    <button onClick={() => category_direction(categories.TITLE)}>{categories.TITLE}</button>
+                                    <button onClick={() => category_direction(categories.CATEGORY_ID)}>{categories.TITLE}</button>
                                     </div>
                                 );    
                             })

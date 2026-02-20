@@ -1,13 +1,13 @@
 import { useNavigate} from "react-router-dom";
 import { socket } from "../../../assets/socket";
-import { useEffect } from "react";
+import { useEffect , useRef , useState} from "react";
 import { useLocation } from "react-router-dom";
 export default function item(){
     const nav = useNavigate();
     const location = useLocation();
     const user = location.state;
     console.log(location);
-    
+    const [categories, setCategories] = useState([]);
 
     useEffect(()=> {
         const onUploaded = (msg) => {
@@ -15,15 +15,29 @@ export default function item(){
         nav("/home")            
         }
 
-
+        socket.emit("category_list");
+        const list = (listmap) =>{
+            setCategories(listmap);
+            
+            
+        }
+        socket.on("category_map", list);
+        
+        
         socket.on("item_uploaded", onUploaded)
+
         return () => {
-           socket.off("item_uploaded", onUploaded)
+        socket.off("category_map", list);
+        
+        socket.off("item_uploaded", onUploaded)
         
     };
     },[]);
+    //console.log(categories);
+    
 
-    function item(params) {
+    function fields(event) {
+        
         const title = document.getElementById('title').value;
         const image_1 = document.getElementById('imageUpload1').files[0];
         const image_2 = document.getElementById('imageUpload2').files[0];
@@ -31,11 +45,14 @@ export default function item(){
         const description = document.getElementById('description').value;
         const price = document.getElementById('price').value;
         const id = user[1];
-        if((title|| description|| price || image_1) === ""){
-            alert("fill out all the field")
+        if (!title || !description || !price || !image_1) {
+            event.preventDefault();
+            alert("Fill out all the fields");
+
             return;
         }
-        
+       
+        //nav("/home",{state: user})
        
     }
 
@@ -50,7 +67,7 @@ export default function item(){
             </h1>
 
             <div>
-                <form action="http://localhost:3000/upload" method="post" encType="multipart/form-data">   
+                <form action="http://localhost:3000/upload" method="post" encType="multipart/form-data" onSubmit={fields} type="submit">   
                     <b>Choose an image to upload:</b><br />
                     <input type="file" id="imageUpload1" name="image_1" accept="image/jpeg,image/png,image/jpg"></input>
                 
@@ -69,19 +86,22 @@ export default function item(){
                     
                     <br />
                     <label >Choose a Category:</label>
-                    <select name="Category" id="Category">
-                        <option value="Clothes">Clothes</option>
-                        <option value="Books">Books</option>
-                        <option value="Sports">sports & leisure</option>
-                        <option value="Music">Music</option>
-                    </select><br />
+                    <select name="categoryID">{
+                    categories.map((categories,i) => {
+                        return (
+                            <option key={i}  value={categories.CATEGORY_ID}>{categories.TITLE}</option>
+                        );    
+                    })
+                    }</select>
 
+                    <br />
                     <b>Price:</b>
                     <input id="price" type="number" min="1" name="price"></input> <br />
                     <input type="hidden" name="userId" value={user[1]} />
-                    <button onClick={()=>nav("/home",{state: user})}>back</button>
-                    <button  type="submit"  name="" onclick="item()">Upload</button>
+                    
+                    <button  name="" onClick={()=>nav("/home",{state: user}) } >Upload</button>
                 </form>   
+                <button onClick={()=>nav("/home",{state: user})}>back</button>
                
             </div>
         </div>

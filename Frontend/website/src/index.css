@@ -146,9 +146,18 @@ div[name = "bar"]{
   font-size: 1.3em;
   
 }
+.card{
+  background-color: dodgerblue;
+  padding: 20px;
+}
 
-
-
+.card div {
+  
+  border-style: solid;
+  border-color: #535bf2;
+  background-color: green;
+  
+}
 
 
 table{
