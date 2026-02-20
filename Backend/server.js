@@ -291,6 +291,18 @@ async function RemoveItem(user, item, socket) {
 }
 
 
+async function Profile(userId, socket) {
+    const [rows] = await pool.query(
+        "SELECT USERNAME, PASSWORD FROM USERS WHERE USER_ID = ?",
+        [userId]
+    );
+
+    if (rows.length > 0) {
+        // Send the row containing the strings back to the frontend
+        socket.emit("profile_data", rows[0]);
+    }
+}
+
 const io = new Server(server, {
     cors: {
         origin: '*',
@@ -304,7 +316,10 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
         console.log('connected:', socket.id);
     
-   
+    socket.on("profile", (userId) => {
+        // When the string "profile" arrives in the packet, run this:
+        Profile(userId, socket);
+    });
 
     socket.on("loggin", ({username, Password})=>{
         Loggin(username,Password, socket);
