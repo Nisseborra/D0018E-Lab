@@ -29,7 +29,7 @@ CREATE TABLE `basket` (
   PRIMARY KEY (`BASKET_ID`),
   KEY `fk_basket_user` (`USER_ID`),
   CONSTRAINT `fk_basket_user` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`USER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE `basket` (
 
 LOCK TABLES `basket` WRITE;
 /*!40000 ALTER TABLE `basket` DISABLE KEYS */;
+INSERT INTO `basket` VALUES (1,0,1);
 /*!40000 ALTER TABLE `basket` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,6 +65,7 @@ CREATE TABLE `basket_item` (
 
 LOCK TABLES `basket_item` WRITE;
 /*!40000 ALTER TABLE `basket_item` DISABLE KEYS */;
+INSERT INTO `basket_item` VALUES (1,60),(1,NULL),(1,NULL),(1,62);
 /*!40000 ALTER TABLE `basket_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -106,7 +108,7 @@ CREATE TABLE `item` (
   `ITEM_ID` int NOT NULL AUTO_INCREMENT,
   `USER_ID` int DEFAULT NULL,
   `TITLE` varchar(50) NOT NULL,
-  `PRICE` double NOT NULL,
+  `PRICE` decimal(10,2) NOT NULL,
   `DESCRIPTION` varchar(255) DEFAULT NULL,
   `IMAGE_1` varchar(255) DEFAULT NULL,
   `IMAGE_2` varchar(255) DEFAULT NULL,
@@ -118,7 +120,7 @@ CREATE TABLE `item` (
   KEY `USER_ID_idx` (`USER_ID`),
   KEY `CATEGORY_ID_idx` (`CATEGORY_ID`),
   CONSTRAINT `CATEGORY_ID` FOREIGN KEY (`CATEGORY_ID`) REFERENCES `category` (`CATEGORY_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,7 +129,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,1,'Laptop',7500,'Used laptop',NULL,NULL,NULL,1,0,NULL),(2,2,'Bike',1200,'Mountain bike',NULL,NULL,NULL,1,0,NULL),(3,1,'Desk',500,'Wooden desk',NULL,NULL,NULL,1,1,NULL);
+INSERT INTO `item` VALUES (62,NULL,'test',123.00,'test','1771572898509-946ab966a87f1956044f751bf7a66b7f.jpg',NULL,NULL,1,0,'mudada-3');
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,4 +224,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-18 13:38:41
+-- Dump completed on 2026-02-20  9:13:25
