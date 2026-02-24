@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ user, logout,categories })  {
     const nav = useNavigate();
+    console.log(user)
     function category_direction(ID) {
+        console.log("cacategory_direction:", ID)
         const nextState = [user[0],user[1], ID];
         console.log("navbar:", nextState)
-        location.reload(); //reload page
+        //location.reload();  //reload page
         nav("/catalog", { state: nextState });
-        
-        
-        
         
     }
     return <nav  className="navbar">
@@ -39,10 +38,6 @@ export default function Navbar({ user, logout,categories })  {
                         </div>
                     
                 </li>
-                
-         
-
-                
         </ul>
 
         

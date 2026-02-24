@@ -69,11 +69,19 @@ export default function basket() {
         const get_items = (items)=>{
             setitems(items)
         }
+        const item_sold = (item)=>{
+            alert(item, "is already sold")
+        }
         
+        const purshed = (msg)=>{
+            alert(msg);
+            nav("/home",{state: user})
+        }
 
         socket.on("basket_items",get_items)
         socket.on("failed get basket", failedbasket )
-        
+        socket.on("item_sold", item_sold);
+        socket.on("PURSHES", purshed)
 
         
 
@@ -94,6 +102,14 @@ export default function basket() {
     function removeITEM(user, item){
         socket.emit("removeITEM",({user, item}))
     }
+
+    function buy(user, items){
+        console.log(user)
+         console.log(items)
+        socket.emit("buy", ({user, items}))
+    }
+    
+
 
 return(
 <div id="center">
@@ -123,7 +139,7 @@ return(
     <h2>Total cost: {totalprice}</h2>
 
 <button onClick={()=> nav("/home",{state: user})} >Back</button>
-<button  >BUY</button>
+<button onClick={()=>buy(user,items)} >BUY</button>
 
 
 

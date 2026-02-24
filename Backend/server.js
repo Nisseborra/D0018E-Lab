@@ -90,12 +90,8 @@ async function category_list(socket) {
     const[rows] = await pool.query(`
         SELECT TITLE,CATEGORY_ID
         FROM CATEGORY
-
-
     `) 
     //console.log(rows);
-    
-    //console.log(list);
     socket.emit("category_map", rows);
     //return rows.length;
 }
@@ -103,17 +99,16 @@ async function category_list(socket) {
 
 //get the info of all item TEMPORARY FROM CATEGORY ID 0 from each ITEM for the template of category
 async function category_template(id,socket) {
+    console.log(id)
     const[rows] = await pool.query(`
         SELECT TITLE,PRICE,IMAGE_1,ITEM_ID
         FROM ITEM 
         WHERE CATEGORY_ID = ${id}
         AND IS_SOLD =  ${0}
-
-
     `) 
     //console.log(rows);
     
-    //console.log(list);
+    console.log("category_template:", rows);
     socket.emit("template_map", rows);
     //return rows.length;
 }
@@ -186,8 +181,10 @@ async function Basket(user, socket) {
      const [baksetid] = await pool.query(`
         SELECT *
         FROM BASKET
-        WHERE USER_ID =? `, [user[1]]);
+        WHERE USER_ID =? 
+        AND IS_ORDERD = 0`, [user[1]]);
         const basket = baksetid[0]
+        console.log(basket)
 
     if(basket === undefined){
         socket.emit("failed get basket", "add to basket")
@@ -196,14 +193,12 @@ async function Basket(user, socket) {
 
     // går igenom 
     const [items] = await pool.query(`
-        SELECT TITLE, PRICE,ITEM.ITEM_ID
+        SELECT TITLE, PRICE,ITEM.ITEM_ID, IS_SOLD
         FROM ITEM
         JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
         WHERE BASKET_ID =?`, [basket.BASKET_ID]);
-
         socket.emit("basket_items", items)
         return
-
     };
 
 
@@ -227,10 +222,7 @@ async function addbasket(user, item, socket) {
             SELECT *
                 FROM BASKET
                 WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
-
             basket = baksetid[0]
-
-
             }
 
         if(item.IS_SOLD ===1){
@@ -285,7 +277,85 @@ async function RemoveItem(user, item, socket) {
 
         socket.emit("basket_items", items)
         return
+}
+
+async function buy(user, items, socket) {
+        console.log("olditems: ", items)
+        const [baksetid] = await pool.query(`
+        SELECT *
+        FROM BASKET
+        WHERE USER_ID =? `, [user[1]]);
+        const basket = baksetid[0]
+        
+        /* 1. look if items is still unsold
+                1.2 removed the bought items and send back the item that are not unsold.
+        */
+        const [updated_items] = await pool.query(`
+        SELECT TITLE, IS_SOLD
+        FROM ITEM
+        JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
+        WHERE BASKET_ID =?` , [basket.BASKET_ID]);
             
+        const solditems = updated_items. find(item=> item.IS_SOLD ===1);
+
+            if(solditems ){
+                        socket.emit("item_sold", (solditems.TITEL))
+                        return
+                    }
+                
+       
+
+       // update basket
+        await pool.query(`
+            UPDATE BASKET
+            SET IS_ORDERD = 1
+            WHERE USER_ID =? `, [user[1]] );
+
+        // update item
+        await pool.query(`
+            UPDATE ITEM
+            JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
+            SET IS_SOLD = 1
+            WHERE BASKET_ID =?
+            AND  IS_SOLD = 0 `, [basket.BASKET_ID] );
+
+        // created order
+           const [order] = await pool.query(`
+            INSERT INTO ORDERS (STATUS, BASKET_ID)
+                VALUES (?,? )`, [0, basket.BASKET_ID]);
+
+            const orderid = order.insertId;
+            console.log("orderid: ",orderid)
+         
+            
+      for (let item of items){
+          await pool.query(`
+            INSERT INTO ORDERS_ITEM (PRICE_SUM, QUANTITY, ORDER_ID, ITEM_ID)
+                VALUES (?,?,?,? )`, [item.PRICE, 1,  orderid, item.ITEM_ID]);
+      }
+
+                
+
+         
+      socket.emit("PURSHES", "items have been purshed")
+            
+
+
+
+        console.log("new items:", updated_items)
+
+        // går igenom all object kollar om TITEL1 == TITEL2:
+            // och if is_SOLD1 == IS_SOLD2
+
+
+        /* look if items is not empty
+            2.  but order item inside ORDER_ITEM
+            3. change the ITEM so that the items are now sold
+            4. upadate the IS_ORDERD is true
+            5. send back that it is ordered
+        */ 
+
+
 
     
 }
@@ -343,16 +413,18 @@ io.on('connection', (socket) => {
         Basket(user,socket)
     })
     socket.on("removeITEM",async ({user,item})=>{
-        console.log(user)
-          console.log(item)
+       
           RemoveItem(user, item, socket)
     })
 
     socket.on("addBasket", ({user, item})=>{
 
-        console.log("addbasket user:", user)
-         console.log("addbasket item:", item)
         addbasket(user, item, socket)
+    })
+    socket.on("buy",  ({user, items})=>{
+            console.log(items)
+            console.log(items)
+        buy(user, items, socket)
     })
 
     socket.on("category_list", ()=>{
@@ -360,10 +432,11 @@ io.on('connection', (socket) => {
     }) ;
     socket.on("category_template", (id)=>{
         category_template(id,socket) 
-    }) ;
+    });
     socket.on("card_template", (id)=>{
         card_template(id,socket) 
     }) ;
+
 
 
  });

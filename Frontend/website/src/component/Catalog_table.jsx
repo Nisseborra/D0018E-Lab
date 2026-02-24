@@ -11,17 +11,15 @@ export default function  Catalog_table({ template, user }) {
     
     function category_direction(ID) {
         const nextState = [user[0],user[1], ID];
-            
         nav("/ItemCard", { state: nextState });      
     }
     
     function additem(user, item){
-       
         socket.emit("addBasket", ({user,item}))
 
     }
     
-    
+console.log("templete:", template)
    return <div className="container">
    {
     template.map((template,i) => {

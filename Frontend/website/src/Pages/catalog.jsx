@@ -4,6 +4,7 @@ import { useEffect , useRef , useState} from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../component/Navbar";
 import Catalog_table from "../component/Catalog_table";
+import { connect } from "socket.io-client";
 
 export default function catalog(){   
     const nav = useNavigate();
@@ -12,17 +13,16 @@ export default function catalog(){
     const [categories, setCategories] = useState([]);
     const [item, setItem] = useState([]);
     const itemRef = useRef([]);
-    //console.log(user);
     
     const lista=null;
 
-  //  console.log(user);
+
     
     
     
     
     useEffect(()=> {
-        
+       
         socket.emit("category_list");
         socket.emit("category_template", user[2]);//temporary checks only id 0 for categiry id 
 
@@ -32,12 +32,12 @@ export default function catalog(){
         }
         //set an array for all the item for the category
         const template = (listmap) =>{
+            console.log("get templetlist:", listmap)
             setItem(listmap);
         }
 
         const itemadded =(item)=>{
             console.log("added item:", item)
-            
             alert((item + " added to basket"))
         }
         const itemerror =(msg)=>{
@@ -61,6 +61,8 @@ export default function catalog(){
     function logout(){
     nav("/", {state:null})
    }
+
+
     return (
         <div>
         <div>

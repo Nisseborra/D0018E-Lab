@@ -134,13 +134,13 @@ INSERT INTO `ITEM` VALUES (62,NULL,'test',123.00,'test','1771572898509-946ab966a
 UNLOCK TABLES;
 
 --
--- Table structure for table `ORDER`
+-- Table structure for table `ORDERS`
 --
 
-DROP TABLE IF EXISTS `ORDER`;
+DROP TABLE IF EXISTS `ORDERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `ORDER` (
+CREATE TABLE `ORDERS` (
   `ORDER_ID` int NOT NULL AUTO_INCREMENT,
   `STATUS` tinyint NOT NULL,
   `BASKET_ID` int DEFAULT NULL,
@@ -151,40 +151,40 @@ CREATE TABLE `ORDER` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ORDER`
+-- Dumping data for table `ORDERS`
 --
 
-LOCK TABLES `ORDER` WRITE;
-/*!40000 ALTER TABLE `ORDER` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ORDER` ENABLE KEYS */;
+LOCK TABLES `ORDERS` WRITE;
+/*!40000 ALTER TABLE `ORDERS` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ORDERS` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ORDER_ITEM`
+-- Table structure for table `ORDERS_ITEM`
 --
 
-DROP TABLE IF EXISTS `ORDER_ITEM`;
+DROP TABLE IF EXISTS `ORDERS_ITEM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `ORDER_ITEM` (
+CREATE TABLE `ORDERS_ITEM` (
   `PRICE_SUM` int NOT NULL,
   `QUANTITY` int NOT NULL,
   `ORDER_ID` int DEFAULT NULL,
   `ITEM_ID` int DEFAULT NULL,
-  KEY `ORDER_INT_idx` (`ORDER_ID`),
+  KEY `ORDERS_INT_idx` (`ORDER_ID`),
   KEY `ITEM_ID_idx` (`ITEM_ID`),
   CONSTRAINT `ITEM_ID` FOREIGN KEY (`ITEM_ID`) REFERENCES `ITEM` (`ITEM_ID`),
-  CONSTRAINT `ORDER_INT` FOREIGN KEY (`ORDER_ID`) REFERENCES `ORDER` (`ORDER_ID`)
+  CONSTRAINT `ORDERS_INT` FOREIGN KEY (`ORDER_ID`) REFERENCES `ORDERS` (`ORDER_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ORDER_ITEM`
+-- Dumping data for table `ORDERS_ITEM`
 --
 
-LOCK TABLES `ORDER_ITEM` WRITE;
-/*!40000 ALTER TABLE `ORDER_ITEM` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ORDER_ITEM` ENABLE KEYS */;
+LOCK TABLES `ORDERS_ITEM` WRITE;
+/*!40000 ALTER TABLE `ORDERS_ITEM` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ORDERS_ITEM` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

@@ -23,7 +23,6 @@ export default function homemenu(){
             }
 
             const itemsold =(msg)=>{
-                
                 alert(msg)
             }
 
