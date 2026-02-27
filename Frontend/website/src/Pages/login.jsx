@@ -12,17 +12,22 @@ export default function Loggin(){
      useEffect(()=> {
       
         const loggin_success =(username)=>{
-            alert
             console.log(username);
             
             nav("/home", {state: username})
         }
+        const  loggin_success_admin = (username)=>{
+            console.log("user:", username[0], "is admin:", username[2] === 1)
+            nav("/Admin", {state: username})
 
+
+        }
         const loggin_error = (msg)=>{
                 alert(msg)
         }
 
         socket.on("logging_success", loggin_success )
+        socket.on("loggin_success_admin", loggin_success_admin)
         socket.on("loggin_error", loggin_error)
         
 

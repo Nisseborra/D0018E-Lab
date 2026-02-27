@@ -9,6 +9,8 @@ const { socket } = require('../Frontend/assets/socket');
 const { log } = require('console');
 const multer = require('multer');
 
+//const { default: admin } = require('../Frontend/website/src/Pages/admin');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -133,7 +135,7 @@ async function card_template(id,socket) {
 
 async function Loggin(username, password, socket) {
     const [rows]  = await pool.query(`
-        SELECT USERNAME, PASSWORD, USER_ID
+        SELECT USERNAME, PASSWORD, USER_ID, IS_ADMIN
         FROM USERS
         WHERE USERNAME =?`, [username]);
         const user = rows[0];
@@ -143,8 +145,15 @@ async function Loggin(username, password, socket) {
         }
         if(user.USERNAME === username && user.PASSWORD === password){
                 console.log("loggin success",)
+                if(user.IS_ADMIN === 0){
                 socket.emit("logging_success", [user.USERNAME, user.USER_ID])
                 return
+                }
+                if(user.IS_ADMIN === 1){
+                    socket.emit("loggin_success_admin", [user.USERNAME, user.USER_ID, user.IS_ADMIN])
+                    return
+                }
+
         }
         socket.emit("loggin_error", "wrong username or passoword") 
    
@@ -176,6 +185,8 @@ async function get_selling_itmes(user, socket) {
          SELECT * FROM ITEM WHERE USER_ID = ${user[1]}`);
         socket.emit("retive_selling_item", items)
 }
+
+
 
 async function Basket(user, socket) {
      const [baksetid] = await pool.query(`
@@ -302,8 +313,7 @@ async function buy(user, items, socket) {
                         socket.emit("item_sold", (solditems.TITEL))
                         return
                     }
-                
-       
+
 
        // update basket
         await pool.query(`
@@ -333,33 +343,110 @@ async function buy(user, items, socket) {
             INSERT INTO ORDERS_ITEM (PRICE_SUM, QUANTITY, ORDER_ID, ITEM_ID)
                 VALUES (?,?,?,? )`, [item.PRICE, 1,  orderid, item.ITEM_ID]);
       }
-
-                
-
-         
-      socket.emit("PURSHES", "items have been purshed")
-            
-
-
-
+ 
+        socket.emit("PURSHES", "items have been purshed")     
         console.log("new items:", updated_items)
+}
 
-        // går igenom all object kollar om TITEL1 == TITEL2:
-            // och if is_SOLD1 == IS_SOLD2
+async function get_users(socket) {
+    console.log("get_users admin")
+     const [users] = await pool.query(`
+        SELECT *
+        FROM USERS
+        WHERE IS_ADMIN =?` , [0]);
 
-
-        /* look if items is not empty
-            2.  but order item inside ORDER_ITEM
-            3. change the ITEM so that the items are now sold
-            4. upadate the IS_ORDERD is true
-            5. send back that it is ordered
-        */ 
-
+    socket.emit("retive_users", users)
 
 
     
 }
 
+async function  delete_user(user, socket) {
+    console.log("delet user:", user.USERNAME)
+         const [baksetid] = await pool.query(`
+            SELECT *
+            FROM BASKET
+            WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
+        const basket = baksetid[0]
+
+            
+        await pool.query(`
+            DELETE FROM BASKET_ITEM WHERE BASKET_ID =? `, [user.USER_ID]);
+
+        await pool.query(`
+            DELETE FROM BASKET WHERE USER_ID =? `, [user.USER_ID]);
+          
+
+    await pool.query(`
+            DELETE FROM USERS WHERE USER_ID =? AND USERNAME =?`, [user.USER_ID, user.USERNAME]);
+    get_users(socket);
+
+    
+}
+
+async function get_items(socket) {
+    console.log("get_item admin")
+     const [items] = await pool.query(`
+        SELECT *
+        FROM ITEM`);
+
+    socket.emit("retive_item", items)
+}
+
+async function delete_item(item, socket) {
+
+
+        // delet from basket_ITEM
+         await pool.query(`
+            DELETE FROM basket_ITEM WHERE ITEM_ID`, [item.ITEM_ID]);
+
+         // delete from item
+            await pool.query(`
+            DELETE FROM ITEM WHERE ITEM_ID`, [item.ITEM_ID]);
+        get_items(socket);
+
+    
+}
+
+
+async function signup_admin(fname, lname, username, password, socket) {
+        const [rows]  = await pool.query(`
+        SELECT USERNAME
+        FROM USERS
+        WHERE USERNAME =?`, [username]);
+        const user = rows[0]
+        if(user !== undefined){
+            socket.emit("signup_error_admin", "Username or account already exist")
+            return
+        }
+
+        await pool.query(`
+        INSERT INTO USERS (USERNAME, FNAME, LNAME, PASSWORD, IS_ADMIN)
+         VALUES (?,? ,?, ?, ?)`, [username, fname, lname,password, 1]
+        );
+
+        socket.emit("signup_success_admin", "succeful sign up")
+
+}
+
+
+
+async function ADMIN_CHECK(ADMIN, socket) {
+        const [users] = await pool.query(`
+        SELECT USERNAME, USER_ID, IS_ADMIN
+        FROM USERS
+        WHERE USERNAME =? AND USER_ID  =? AND IS_ADMIN= ?`, [ADMIN[0], ADMIN[1], ADMIN[2] ]);
+        const admin = users[0];
+    
+        if(admin){
+            console.log("is_ADMIN:", admin)
+            return;
+        }
+        else{
+            console.log("IS NOT ADMIN");
+            socket.emit("NOT_ADMIN","NOT ADMIN")
+    }
+}
 
 async function Profile(userId, socket) {
     const [rows] = await pool.query(
@@ -400,6 +487,11 @@ io.on('connection', (socket) => {
         signup(fname, lname, username, password, socket);
     });
 
+    socket.on("signup_admin",({fname, lname, username, password, admin})=>{
+        ADMIN_CHECK(admin,socket);
+        signup_admin(fname, lname, username, password, socket);
+    });
+
     socket.on("item", ({title,image_1,image_2,image_3,description,price,id})=>{
         item(title,image_1,image_2,image_3,description,price,id,socket) 
     }) ;
@@ -422,14 +514,12 @@ io.on('connection', (socket) => {
         addbasket(user, item, socket)
     })
     socket.on("buy",  ({user, items})=>{
-            console.log(items)
-            console.log(items)
         buy(user, items, socket)
     })
 
     socket.on("category_list", ()=>{
         category_list(socket) 
-    }) ;
+    });
     socket.on("category_template", (id)=>{
         category_template(id,socket) 
     });
@@ -437,6 +527,33 @@ io.on('connection', (socket) => {
         card_template(id,socket) 
     }) ;
 
+    socket.on("getusers", (admin)=>{
+        ADMIN_CHECK(admin, socket)
+        console.log("get_user_admin")
+        get_users(socket)
+    })
+
+    socket.on("delet_user", (user1 )=>{
+
+         const user = user1[0]
+        const admin = user1[1]
+          ADMIN_CHECK(admin, socket)
+        delete_user(user, socket)
+    } )
+
+    socket.on("getitems", (admin)=>{
+        ADMIN_CHECK(admin, socket)
+        console.log("get_items")
+        get_items(socket);
+    })
+
+    socket.on("delete_item", (item1)=>{
+                const item = item1[0]
+                const admin = item1[1]
+            ADMIN_CHECK(admin, socket)
+            delete_item(item, socket);
+    })
+   
 
 
  });

@@ -5,36 +5,36 @@ import { useEffect } from "react";
 
 
 
-export default function Signup(){      
-       const nav = useNavigate();
+export default function signup_admin({close, admin, categories}){      
+      
 
         useEffect(()=> {
+
+            const signup_error_admin = (msg)=>{
+                alert(msg);
+               }
+
+               const signup_success_admin =  (msg)=>{
+                alert(msg);
+                close();
+
+
+               }
         
-
-            const signup_error = (msg)=>{
-                alert(msg);
-               }
-
-            const signup_success = (msg)=>{
-                alert(msg);
-                nav("/")
-               }
-            
-
-               socket.on("signup_error", signup_error);
+               socket.on("signup_error_admin", signup_error_admin );
        
-               socket.on("signup_success", signup_success)
+               socket.on("signup_success_admin", signup_success_admin)
 
             return () => {
-                  socket.off("signup_error", signup_error);
+                 socket.off("signup_error_admin", signup_error_admin );
        
-               socket.off("signup_success", signup_success)
-               
+               socket.off("signup_success_admin", signup_success_admin)
+
            };
               
            }, [])
 
-        function Signup(){
+        function Signup_admin(){
             const fname = document.getElementById("fname").value;
             const lname  = document.getElementById("lname").value;
             const username  = document.getElementById("username").value;
@@ -50,17 +50,14 @@ export default function Signup(){
                 alert("Password are not the same");
             }
             
-           
-
-
-        socket.emit("signup", ({fname,lname,username,password}));
+        socket.emit("signup_admin", ({fname,lname,username,password, admin}));
     }
    
 
     return(
         <div>
             <h1>
-                Signup
+                SIGNUP ANOTHER ADMIN ACCOUNT
             </h1>
              <label >firstname: </label> <br></br>
                 <input id = "fname" placeholder="Firstname" maxLength={15} required></input> <br></br>
@@ -78,9 +75,8 @@ export default function Signup(){
                 <input id = "confirm password" placeholder="Confirm Password" type="password" maxLength={255} required ></input> <br></br>
 
 
-    <button onClick={()=>nav("/")}>back
-    </button>
-    <button onClick={Signup} type="submit">Signup</button>
+    <button onClick={()=>close()}>back</button>
+    <button onClick={Signup_admin} type="submit">Signup</button>
         
     </div>
     )

@@ -12,6 +12,7 @@ import Catalog from "./Pages/catalog.jsx";
 import Basket from "./Pages/Basket.jsx";
 import ItemCard from "./Pages/ItemCard.jsx";
 import { Profile } from "./Pages/profile.jsx";
+import Admin from "./Pages/admin.jsx";
 export default function app(){
 
     return(
@@ -27,6 +28,7 @@ export default function app(){
                         <Route path="/basket" element={<Basket></Basket>}></Route>
                         <Route path="/ItemCard" element={<ItemCard></ItemCard>}></Route>
                         <Route path="/Profile" element={<Profile></Profile>}></Route>
+                        <Route path="/ADMIN" element ={<Admin></Admin>}></Route>
                         
                         
 

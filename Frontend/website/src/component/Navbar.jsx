@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ user, logout,categories })  {
     const nav = useNavigate();
-    console.log(user)
+    //console.log(user)
     function category_direction(ID) {
         console.log("cacategory_direction:", ID)
         const nextState = [user[0],user[1], ID];

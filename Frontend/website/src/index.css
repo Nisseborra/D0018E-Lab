@@ -74,6 +74,18 @@ div[name = "bar"]{
   
 }
 
+table{
+  border: 2px solid blue;
+  width: 80%;
+  border-collapse: collapse;
+
+}
+
+th,td{
+    border: 2px solid blue;
+    padding: 20px;
+}
+
 
 .navbar ul {
     list-style-type: none;
