@@ -16,7 +16,7 @@ export default function Navbar({ user, logout,categories })  {
         
         <ul>
             <label>Get ride of stuff</label>
-            <li><button onClick={()=> nav("/profile",{state: user})} >Loggin as {user[0]}</button></li>
+            <li><button onClick={()=> nav("/profile",{state: user})} >{user[0]}'s Profile</button></li>
                 
                 <li><button onClick={logout}>Logg out</button></li>
                 <li><button onClick={()=> nav("/item" , {state: user})}>Advertisement</button></li>

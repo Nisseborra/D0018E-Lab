@@ -18,7 +18,7 @@ const server = http.createServer(app);
 const pool = mysql.createPool({
     host:'localhost',            //process.env.MYSQL_HOST,
     user:'root' ,               //process.env.MYSQL_USER,
-    password:'Root1234',              //process.env.MYSQL_PASSWORD,
+    password:'root',              //process.env.MYSQL_PASSWORD,
     database:'D0018E'               ///process.env.MYSQL_DATABASE
 }).promise()
 
@@ -449,14 +449,44 @@ async function ADMIN_CHECK(ADMIN, socket) {
 }
 
 async function Profile(userId, socket) {
-    const [rows] = await pool.query(
-        "SELECT USERNAME, PASSWORD FROM USERS WHERE USER_ID = ?",
-        [userId]
-    );
+    try {
+        // "*" pulls every column: USER_ID, USERNAME, PASSWORD, FNAME, LAST_NAME, etc.
+        const [rows] = await pool.query(
+            "SELECT * FROM USERS WHERE USER_ID = ?",
+            [userId]
+        );
 
-    if (rows.length > 0) {
-        // Send the row containing the strings back to the frontend
-        socket.emit("profile_data", rows[0]);
+        if (rows.length > 0) {
+            // Send the entire row object (all columns) to the frontend
+            socket.emit("profile_data", rows[0]);
+        }
+    } catch (error) {
+        console.error("Database Error:", error);
+    }
+}
+
+
+async function update_password(userId, newPassword, socket) {
+    console.log("--- UPDATE ATTEMPT ---");
+    console.log("ID received:", userId);
+    console.log("String received:", newPassword);
+
+    try {
+        const [result] = await pool.query(
+            "UPDATE USERS SET PASSWORD = ? WHERE USER_ID = ?",
+            [newPassword, userId]
+        );
+
+        console.log("Rows affected in MySQL:", result.affectedRows);
+
+        if (result.affectedRows > 0) {
+            socket.emit("update_success", "Password updated on disk.");
+        } else {
+            console.log("WARNING: No row found with that USER_ID.");
+        }
+    } catch (error) {
+        console.error("SQL ERROR:", error);
+        socket.emit("update_error", "Database write failed.");
     }
 }
 
@@ -481,6 +511,11 @@ io.on('connection', (socket) => {
     socket.on("loggin", ({username, Password})=>{
         Loggin(username,Password, socket);
             } );
+
+    
+    socket.on("update_password", ({ userId, newPassword }) => {   
+        update_password(userId, newPassword, socket);
+    });
 
 
     socket.on("signup",({fname, lname, username, password})=>{
