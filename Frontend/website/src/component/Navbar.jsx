@@ -22,7 +22,8 @@ export default function Navbar({ user, logout,categories })  {
                 <li><button onClick={()=> nav("/item" , {state: user})}>Advertisement</button></li>
                 <li><button onClick={()=> nav("/basket", {state: user})}>Basket</button></li>
                 <li><button onClick={()=> nav("/selling",{state: user})} >Selling</button></li>
-                <li><button >Bought</button></li>
+{/* Updated Button */}
+<li><button onClick={() => nav("/History", { state: user })}>Bought</button></li>
                 <li className="dropdown">
                     <a>category</a>
                         <div className="dropdown-content">
