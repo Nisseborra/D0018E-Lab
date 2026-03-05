@@ -4,7 +4,7 @@ import { socket } from "../../../assets/socket";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-import Admin_user from "./admin_user";
+import Admin_user from "./Admin_user";
 import Admin_items from "./Admin_items";
 import Admin_account from "./Admin_account";
 import { useState } from "react";

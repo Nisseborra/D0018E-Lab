@@ -18,8 +18,10 @@ const server = http.createServer(app);
 const pool = mysql.createPool({
     host:'localhost',            //process.env.MYSQL_HOST,
     user:'root' ,               //process.env.MYSQL_USER,
-    password:'Root1234',              //process.env.MYSQL_PASSWORD,
-    database:'D0018E'               ///process.env.MYSQL_DATABASE
+    password:'Root1234',   
+    //password:'root'      
+     database:'d0018e'     //process.env.MYSQL_PASSWORD,
+    //database:'D0018E'               ///process.env.MYSQL_DATABASE
 }).promise()
 
 ///////////////////// Files to Local public folder
@@ -281,6 +283,7 @@ async function addbasket(user, item, socket) {
                 FROM BASKET
                 WHERE IS_ORDERD = 0 AND USER_ID =? ` , [user[1]]);
             basket = baksetid[0]
+            console.log("new basket for", user[1],"basket:", basket)
             }
 
         if(item.IS_SOLD ===1){
@@ -301,7 +304,7 @@ async function addbasket(user, item, socket) {
         // ska också lägga till så man inte kan köpa sin egna product
 
         await pool.query(`
-            INSERT INTO BASKET_item (Basket_ID, ITEM_ID)
+            INSERT INTO BASKET_ITEM (Basket_ID, ITEM_ID)
                 VALUES (?,? )`, [basket.BASKET_ID, item.ITEM_ID]); 
         
         socket.emit("item_added", (item.TITLE))
@@ -321,7 +324,7 @@ async function RemoveItem(user, item, socket) {
         }
 
         await pool.query(`
-            DELETE FROM BASKET_item WHERE BASKET_ID =? AND ITEM_ID =?`, [basket.BASKET_ID, item.ITEM_ID]);
+            DELETE FROM BASKET_ITEM WHERE BASKET_ID =? AND ITEM_ID =?`, [basket.BASKET_ID, item.ITEM_ID]);
 
         
         console.log("delet success")
@@ -342,7 +345,7 @@ async function buy(user, items, socket) {
         const [baksetid] = await pool.query(`
         SELECT *
         FROM BASKET
-        WHERE USER_ID =? `, [user[1]]);
+        WHERE USER_ID =? AND IS_ORDERD = ?`, [user[1], 0]);
         const basket = baksetid[0]
         
         /* 1. look if items is still unsold
@@ -354,7 +357,7 @@ async function buy(user, items, socket) {
         JOIN BASKET_ITEM ON ITEM.ITEM_ID = BASKET_ITEM.ITEM_ID 
         WHERE BASKET_ID =?` , [basket.BASKET_ID]);
             
-        const solditems = updated_items. find(item=> item.IS_SOLD ===1);
+        const solditems = updated_items.find(item=> item.IS_SOLD ===1);
 
             if(solditems ){
                         socket.emit("item_sold", (solditems.TITEL))

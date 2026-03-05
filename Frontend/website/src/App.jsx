@@ -2,17 +2,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 
-import Startmenu from './Pages/startmenu.jsx'
-import Loggin from "./Pages/login.jsx";
+import Startmenu from './Pages/Startmenu.jsx'
+import Loggin from "./Pages/Login.jsx";
 import Signup from "./Pages/Signup.jsx";
 import Item from "./Pages/item.jsx";
-import Homemenu from "./Pages/homemenu.jsx";
+import Homemenu from "./Pages/Homemenu.jsx";
 import Selling from "./Pages/Selling.jsx";
-import Catalog from "./Pages/catalog.jsx";
+import Catalog from "./Pages/Catalog.jsx";
 import Basket from "./Pages/Basket.jsx";
 import ItemCard from "./Pages/ItemCard.jsx";
-import { Profile } from "./Pages/profile.jsx";
-import Admin from "./Pages/admin.jsx";
+import { Profile } from "./Pages/Profile.jsx";
+import Admin from "./Pages/Admin.jsx";
 import ItemEdit from "./Pages/ItemEdit.jsx";
 import ItemUpdate from "./Pages/ItemUpdate.jsx";
 import History from "./Pages/History.jsx";

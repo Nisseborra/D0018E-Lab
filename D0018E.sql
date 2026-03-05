@@ -147,7 +147,7 @@ CREATE TABLE `ORDERS` (
   PRIMARY KEY (`ORDER_ID`),
   KEY `BASKET_ID_idx` (`BASKET_ID`),
   CONSTRAINT `fk_orders_basket` FOREIGN KEY (`BASKET_ID`) REFERENCES `BASKET` (`BASKET_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,7 +175,7 @@ CREATE TABLE `ORDERS_ITEM` (
   KEY `ITEM_ID_idx` (`ITEM_ID`),
 CONSTRAINT `fk_orders_item_item` FOREIGN KEY (`ITEM_ID`) REFERENCES `ITEM` (`ITEM_ID`),
 CONSTRAINT `fk_orders_item_order` FOREIGN KEY (`ORDER_ID`) REFERENCES `ORDERS` (`ORDER_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
