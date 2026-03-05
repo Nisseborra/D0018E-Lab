@@ -18,7 +18,7 @@ const server = http.createServer(app);
 const pool = mysql.createPool({
     host:'localhost',            //process.env.MYSQL_HOST,
     user:'root' ,               //process.env.MYSQL_USER,
-    password:'root',              //process.env.MYSQL_PASSWORD,
+    password:'Root1234',              //process.env.MYSQL_PASSWORD,
     database:'D0018E'               ///process.env.MYSQL_DATABASE
 }).promise()
 
@@ -67,15 +67,62 @@ app.post('/upload', upload.fields([
     //insert the detail into item
     await pool.query(`
         INSERT INTO ITEM  
-        (TITLE, DESCRIPTION, CATEGORY_ID, PRICE, IMAGE_1, IMAGE_2, IMAGE_3,CREATED_BY )
-        VALUES ( ?, ?, ?, ?, ?, ?,?,?)`,
-        [title, description,categoryID,price,image_1,image_2,image_3,username]
+        (TITLE, USER_ID,DESCRIPTION, CATEGORY_ID, PRICE, IMAGE_1, IMAGE_2, IMAGE_3,CREATED_BY )
+        VALUES ( ?, ?,?, ?, ?, ?, ?,?,?)`,
+        [title, userId,description,categoryID,price,image_1,image_2,image_3,username]
         );    
 
      //res.send('File uploaded successfully from multer.');
      //res.redirect('http://localhost:5173/home');
      
 });
+
+
+app.post('/update', upload.fields([
+    { name: 'image_1', maxCount: 1 },
+    { name: 'image_2', maxCount: 1 },
+    { name: 'image_3', maxCount: 1 }  
+]), async(req, res) => {
+
+    const itemId = Number(req.body.itemId);
+    const [rows] = await pool.query(
+        `SELECT * FROM ITEM WHERE ITEM_ID = ${itemId}`,
+    );
+
+    const item = rows[0];
+    //reaquestion the data and files from the form
+    
+    const title = req.body.title || item.TITLE;
+    const description = req.body.description || item.DESCRIPTION;
+    const categoryID = req.body.categoryID || item.CATEGORY_ID;
+    const price = req.body.price || item.PRICE;
+
+    const image_1 = req.files.image_1?.[0]?.filename || item.IMAGE_1;
+    const image_2 = req.files.image_2?.[0]?.filename || item.IMAGE_2;
+    const image_3 = req.files.image_3?.[0]?.filename || item.IMAGE_3;
+    
+    //insert the updated info into item table
+        await pool.query(
+        `UPDATE ITEM
+        SET 
+        TITLE = ?,
+        DESCRIPTION = ?,
+        CATEGORY_ID = ?,
+        PRICE = ?,
+        IMAGE_1 = ?,
+        IMAGE_2 = ?,
+        IMAGE_3 = ?
+        WHERE ITEM_ID = ?
+        `,
+        [title, description, categoryID, price, image_1, image_2, image_3, itemId]
+        );
+
+     //res.send('File uploaded successfully from multer.');
+     //res.redirect('http://localhost:5173/home');
+     
+});
+
+
 
 //////////////////// DATABASE TABLE GETERS
 
@@ -103,7 +150,7 @@ async function category_list(socket) {
 async function category_template(id,socket) {
     console.log(id)
     const[rows] = await pool.query(`
-        SELECT TITLE,PRICE,IMAGE_1,ITEM_ID
+        SELECT TITLE,PRICE,IMAGE_1,ITEM_ID,USER_ID
         FROM ITEM 
         WHERE CATEGORY_ID = ${id}
         AND IS_SOLD =  ${0}
@@ -119,7 +166,7 @@ async function card_template(id,socket) {
     console.log(id);
     
     const[rows] = await pool.query(`
-        SELECT TITLE,PRICE,IMAGE_1,DESCRIPTION,ITEM_ID
+        SELECT TITLE,PRICE,IMAGE_1,IMAGE_2,IMAGE_3,DESCRIPTION,ITEM_ID
         FROM ITEM 
         WHERE ITEM_ID = ${id}
         

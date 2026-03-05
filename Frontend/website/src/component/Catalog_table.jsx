@@ -9,9 +9,13 @@ import { useLocation } from "react-router-dom";
 export default function  Catalog_table({ template, user }) {
     const nav = useNavigate();
     
-    function category_direction(ID) {
+    function category_direction(ID,USER_ID) {
         const nextState = [user[0],user[1], ID];
-        nav("/ItemCard", { state: nextState });      
+        console.log("neXT STATE:", nextState);
+        if (nextState[1]==USER_ID) {
+            nav("/ItemEdit", { state: nextState }); 
+        }
+        else{nav("/ItemCard", { state: nextState }); }  
     }
     
     function additem(user, item){
@@ -19,14 +23,14 @@ export default function  Catalog_table({ template, user }) {
 
     }
     
-console.log("templete:", template)
+//console.log("templete:", template)
    return <div className="container">
    {
     template.map((template,i) => {
         return(
             <div key={i}>
             <img src={`/uploads/${template.IMAGE_1}`}  alt={`/uploads/produkt.jpg`}/>
-                <h4><button onClick={()=>category_direction(template.ITEM_ID)}>{template.TITLE}</button></h4>
+                <h4><button onClick={()=>category_direction(template.ITEM_ID, template.USER_ID)}>{template.TITLE}</button></h4>
                 
                 <div>
                     <span>{template.PRICE}</span>

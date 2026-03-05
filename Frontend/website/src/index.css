@@ -172,6 +172,25 @@ th,td{
 }
 
 
+/* Button used to open the contact form - fixed at the bottom of the page */
+
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  background-color: blue;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 200px;
+  padding: 10px;
+  background-color: white;
+}
+
+
 table{
   justify-content: center;
 }

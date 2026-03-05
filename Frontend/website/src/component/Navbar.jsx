@@ -12,7 +12,18 @@ export default function Navbar({ user, logout,categories })  {
         nav("/catalog", { state: nextState });
         
     }
-    return <nav  className="navbar">
+
+    function openForm() {
+        document.getElementById("myForm").style.display = "block";
+    }
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+
+    return (
+    <div>
+        <div>
+    <nav  className="navbar">
         
         <ul>
             <label>Get ride of stuff</label>
@@ -38,9 +49,46 @@ export default function Navbar({ user, logout,categories })  {
                         </div>
                     
                 </li>
-        </ul>
 
+                <li><button onClick={openForm}>Open Form</button></li>
+                
+
+        </ul>
+        
         
     </nav>
+    </div>
+    <div className="form-popup" id="myForm">
+       
+            <h1>Review</h1>
+            <label> Description</label>
+            <input id="description" placeholder="Description"  maxLength={150}></input> 
+            <br />
+            <label >rateing</label>
+              <label>
+    <input type="radio" name="rating" value="1" /> 1
+  </label>
 
+    <label>
+        <input type="radio" name="rating" value="2" /> 2
+    </label>
+
+    <label>
+        <input type="radio" name="rating" value="3" /> 3
+    </label>
+
+    <label>
+        <input type="radio" name="rating" value="4" /> 4
+    </label>
+
+    <label>
+        <input type="radio" name="rating" value="5" /> 5
+    </label>
+    <br />
+            <button type="submit" className="btn">submit</button>
+            <button type="button" className="btn cancel" onClick={closeForm}>Close</button>
+     
+    </div>
+</div>
+) 
 }

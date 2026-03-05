@@ -13,6 +13,8 @@ import Basket from "./Pages/Basket.jsx";
 import ItemCard from "./Pages/ItemCard.jsx";
 import { Profile } from "./Pages/profile.jsx";
 import Admin from "./Pages/admin.jsx";
+import ItemEdit from "./Pages/ItemEdit.jsx";
+import ItemUpdate from "./Pages/ItemUpdate.jsx";
 export default function app(){
 
     return(
@@ -29,6 +31,8 @@ export default function app(){
                         <Route path="/ItemCard" element={<ItemCard></ItemCard>}></Route>
                         <Route path="/Profile" element={<Profile></Profile>}></Route>
                         <Route path="/ADMIN" element ={<Admin></Admin>}></Route>
+                        <Route path="/ItemEdit" element ={<ItemEdit></ItemEdit>}></Route>
+                        <Route path="/ItemUpdate" element ={<ItemUpdate></ItemUpdate>}></Route>
                         
                         
 
