@@ -537,6 +537,31 @@ async function update_password(userId, newPassword, socket) {
     }
 }
 
+async function get_raw_history(userId, socket) {
+    try {
+        // We pull every item linked to a basket owned by this user 
+        // that has been finalized into an order.
+        const [rows] = await pool.query(`
+            SELECT 
+                i.TITLE, 
+                oi.PRICE_SUM, 
+                oi.QUANTITY, 
+                o.ORDER_ID
+            FROM USERS u
+            INNER JOIN BASKET b ON u.USER_ID = b.USER_ID
+            INNER JOIN ORDERS o ON b.BASKET_ID = o.BASKET_ID
+            INNER JOIN ORDERS_ITEM oi ON o.ORDER_ID = oi.ORDER_ID
+            INNER JOIN ITEM i ON oi.ITEM_ID = i.ITEM_ID
+            WHERE u.USER_ID = ?
+        `, [userId]);
+
+        socket.emit("history_data_raw", rows);
+    } catch (error) {
+        console.error("Mechanical Fetch Error:", error);
+    }
+}
+
+
 const io = new Server(server, {
     cors: {
         origin: '*',
@@ -559,7 +584,9 @@ io.on('connection', (socket) => {
         Loggin(username,Password, socket);
             } );
 
-    
+    socket.on("fetch_history", (userId) => {
+    get_raw_history(userId, socket);
+});
     socket.on("update_password", ({ userId, newPassword }) => {   
         update_password(userId, newPassword, socket);
     });

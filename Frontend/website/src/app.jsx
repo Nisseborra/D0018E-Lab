@@ -15,6 +15,7 @@ import { Profile } from "./Pages/profile.jsx";
 import Admin from "./Pages/admin.jsx";
 import ItemEdit from "./Pages/ItemEdit.jsx";
 import ItemUpdate from "./Pages/ItemUpdate.jsx";
+import History from "./Pages/History.jsx";
 export default function app(){
 
     return(
@@ -34,6 +35,7 @@ export default function app(){
                         <Route path="/ItemEdit" element ={<ItemEdit></ItemEdit>}></Route>
                         <Route path="/ItemUpdate" element ={<ItemUpdate></ItemUpdate>}></Route>
                         
+                        <Route path="/History" element={<History></History>} ></Route>
                         
 
 

@@ -113,7 +113,7 @@ export default function basket() {
 
 return(
 <div id="center">
-    <h2>Selling/Sold</h2>
+    <h2>Basket</h2>
 <br></br>
     <table>
         <thead>
