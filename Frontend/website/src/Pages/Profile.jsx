@@ -87,6 +87,9 @@ export function Profile() {
                             
                             <span style={styles.label}>Last Name</span>
                             <div style={styles.value}>{data.LNAME}</div>
+                            <span style={styles.label}>Rating</span>
+                            <div style={styles.value}>{data.AVG}/5</div>
+
                         </div>
                     </div>
                 </div>
@@ -121,6 +124,7 @@ export function Profile() {
                     </div>
                 </div>
             </div>
+           
         </div>
     );
 }

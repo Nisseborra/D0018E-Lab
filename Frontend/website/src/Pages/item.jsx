@@ -66,7 +66,7 @@ export default function item(){
             </h1>
 
             <div>
-                <form action="http://13.48.47.244:3000/upload" method="post" encType="multipart/form-data" onSubmit={fields} type="submit">   
+                <form action="http://localhost:3000/upload" method="post" encType="multipart/form-data" onSubmit={fields} type="submit">   
                     <b>Choose an image to upload:</b><br />
                     <input type="file" id="imageUpload1" name="image_1" accept="image/jpeg,image/png,image/jpg"></input>
                 

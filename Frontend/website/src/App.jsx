@@ -16,6 +16,9 @@ import Admin from "./Pages/Admin.jsx";
 import ItemEdit from "./Pages/ItemEdit.jsx";
 import ItemUpdate from "./Pages/ItemUpdate.jsx";
 import History from "./Pages/History.jsx";
+import ReviewTable from "./Pages/ReviewTable.jsx";
+ //
+                        
 export default function app(){
 
     return(
@@ -27,7 +30,7 @@ export default function app(){
                         <Route path ="/item" element={<Item></Item>}></Route>
                         <Route path="/home" element={<Homemenu></Homemenu>}></Route>
                         <Route path="/selling" element={<Selling></Selling>}></Route>
-                        <Route path="/catalog" element={<Catalog></Catalog>}></Route>
+                        <Route path="/catalog/:id" element={<Catalog></Catalog>}></Route>
                         <Route path="/basket" element={<Basket></Basket>}></Route>
                         <Route path="/ItemCard" element={<ItemCard></ItemCard>}></Route>
                         <Route path="/Profile" element={<Profile></Profile>}></Route>
@@ -36,7 +39,7 @@ export default function app(){
                         <Route path="/ItemUpdate" element ={<ItemUpdate></ItemUpdate>}></Route>
                         
                         <Route path="/History" element={<History></History>} ></Route>
-                        
+                       <Route path="/ReviewTable" element={<ReviewTable></ReviewTable>} ></Route>
 
 
             </Routes>

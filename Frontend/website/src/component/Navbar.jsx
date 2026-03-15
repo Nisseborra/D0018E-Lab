@@ -9,16 +9,10 @@ export default function Navbar({ user, logout,categories })  {
         const nextState = [user[0],user[1], ID];
         console.log("navbar:", nextState)
         //location.reload();  //reload page
-        nav("/catalog", { state: nextState });
+        nav(`/catalog/${ID}`, { state: nextState });
         
     }
 
-    function openForm() {
-        document.getElementById("myForm").style.display = "block";
-    }
-    function closeForm() {
-        document.getElementById("myForm").style.display = "none";
-    }
 
     return (
     <div>
@@ -51,7 +45,7 @@ export default function Navbar({ user, logout,categories })  {
                     
                 </li>
 
-                <li><button onClick={openForm}>Open Form</button></li>
+             <li><button onClick={() => nav("/ReviewTable", { state: user })}>Review</button></li>
                 
 
         </ul>
@@ -59,37 +53,7 @@ export default function Navbar({ user, logout,categories })  {
         
     </nav>
     </div>
-    <div className="form-popup" id="myForm">
-       
-            <h1>Review</h1>
-            <label> Description</label>
-            <input id="description" placeholder="Description"  maxLength={150}></input> 
-            <br />
-            <label >rateing</label>
-              <label>
-    <input type="radio" name="rating" value="1" /> 1
-  </label>
-
-    <label>
-        <input type="radio" name="rating" value="2" /> 2
-    </label>
-
-    <label>
-        <input type="radio" name="rating" value="3" /> 3
-    </label>
-
-    <label>
-        <input type="radio" name="rating" value="4" /> 4
-    </label>
-
-    <label>
-        <input type="radio" name="rating" value="5" /> 5
-    </label>
-    <br />
-            <button type="submit" className="btn">submit</button>
-            <button type="button" className="btn cancel" onClick={closeForm}>Close</button>
-     
-    </div>
+   
 </div>
 ) 
 }

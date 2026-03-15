@@ -4,10 +4,10 @@ export default function  CardDetail({ card, user }) {
 
      const nav = useNavigate();
 console.log("asdsad :",card);
-    function additem(user, item){
+    function removeitem(user, item){
        
-        socket.emit("addBasket", ({user,item}))
-        
+        socket.emit("seller_delete_item", (user[2]));
+        nav("/home", {state: user});
     }
     
    return <div className="card">
@@ -24,7 +24,7 @@ console.log("asdsad :",card);
                     <span>{card.PRICE}</span>
                 </div>
                 <div>
-                    <button onClick={()=>additem(user, card)}>remove</button>
+                    <button onClick={()=>removeitem(user, card)}>remove</button>
                     <button onClick={()=> nav("/ItemUpdate", {state: user})}>update</button>
                     
                     

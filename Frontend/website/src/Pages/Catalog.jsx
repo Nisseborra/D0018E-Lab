@@ -1,75 +1,69 @@
-import { useNavigate} from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { socket } from "../../../assets/socket";
-import { useEffect , useRef , useState} from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Navbar from "../component/Navbar";
 import Catalog_table from "../component/Catalog_table";
-import { connect } from "socket.io-client";
 
-export default function catalog(){   
+export default function Catalog() {
     const nav = useNavigate();
     const location = useLocation();
+    const { id } = useParams();   // category id from URL
+
     const user = location.state;
     const [categories, setCategories] = useState([]);
     const [item, setItem] = useState([]);
-    const itemRef = useRef([]);
-    
-    const lista=null;
 
+    console.log("PAGES", user);
+    console.log("Category ID from URL:", id);
 
-    
-    
-    
-    
-    useEffect(()=> {
-       
+    useEffect(() => {
         socket.emit("category_list");
-        socket.emit("category_template", user[2]);//temporary checks only id 0 for categiry id 
+        socket.emit("category_template", id);
 
-        //set an array for the categorys for navbar
-        const list = (listmap) =>{
+        const list = (listmap) => {
             setCategories(listmap);
-        }
-        //set an array for all the item for the category
-        const template = (listmap) =>{
-            console.log("get templetlist:", listmap)
+        };
+
+        const template = (listmap) => {
+            console.log("get templetlist:", listmap);
             setItem(listmap);
-        }
+        };
 
-        const itemadded =(item)=>{
-            console.log("added item:", item)
-            alert((item + " added to basket"))
-        }
-        const itemerror =(msg)=>{
-            console.log("itemerror")
-            alert(msg)
+        const itemadded = (item) => {
+            console.log("added item:", item);
+            alert(item + " added to basket");
+        };
 
-        }
-        
+        const itemerror = (msg) => {
+            console.log("itemerror");
+            alert(msg);
+        };
+
         socket.on("category_map", list);
         socket.on("template_map", template);
-        socket.on("item_added", itemadded)
-        socket.on("item_error", itemerror)
-        
-        return () => {
-            socket.off("category_map", list )
-            socket.off("template_map", template);
-             socket.off("item_added", itemadded)
-        socket.off("item_error", itemerror)
-        };
-    }, [])
-    function logout(){
-    nav("/", {state:null})
-   }
+        socket.on("item_added", itemadded);
+        socket.on("item_error", itemerror);
 
+        return () => {
+            socket.off("category_map", list);
+            socket.off("template_map", template);
+            socket.off("item_added", itemadded);
+            socket.off("item_error", itemerror);
+        };
+    }, [id]);   // rerun when category changes
+
+    function logout() {
+        nav("/", { state: null });
+    }
 
     return (
         <div>
-        <div>
-        <Navbar user={user} logout={logout}  categories={categories}/>
+            <div>
+                <Navbar user={user} logout={logout} categories={categories} />
+            </div>
+            <div>
+                <Catalog_table template={item} user={user} />
+            </div>
         </div>
-        <div><Catalog_table template={item} user={user} /></div>
-        </div>
-        
-    )
+    );
 }

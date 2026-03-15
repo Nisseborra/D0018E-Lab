@@ -15,11 +15,13 @@ export default function ItemCard(){
     useEffect(()=> {
         socket.emit("category_list");
         socket.emit("card_template",user[2]);
+
+
         const list = (listmap) =>{
-            setCategories(listmap);
+            setCategories(listmap); //set the value to categories
         }
         const template = (map) =>{
-            setCard(map);
+            setCard(map);           //set the items of said category in a array
         } 
         
         

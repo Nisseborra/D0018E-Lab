@@ -75,10 +75,10 @@ app.post('/upload', upload.fields([
         );    
 
      //res.send('File uploaded successfully from multer.');
-     //res.redirect('http://localhost:5173/home');
+     //res.redirect('http://localhost:5173');
      
 });
-
+/*
 
 app.post('/update', upload.fields([
     { name: 'image_1', maxCount: 1 },
@@ -124,7 +124,7 @@ app.post('/update', upload.fields([
      
 });
 
-
+*/
 
 //////////////////// DATABASE TABLE GETERS
 
@@ -136,6 +136,7 @@ async function getItem() {
   return rows;
 }
 
+
 //get the title from each category
 async function category_list(socket) {
     const[rows] = await pool.query(`
@@ -146,8 +147,21 @@ async function category_list(socket) {
     socket.emit("category_map", rows);
     //return rows.length;
 }
+//get the reviews the user has gotten
+async function review_template(id, socket) {
 
+  const [reviews] = await pool.query(
+    `SELECT RATE.DESCRIPTION
+     FROM ITEM
+     JOIN RATE ON ITEM.ITEM_ID = RATE.ITEM_ID
+     WHERE ITEM.USER_ID = ?`,
+    [id]
+  );
 
+  console.log(reviews);
+
+  socket.emit("review_map", reviews);
+}
 //get the info of all item TEMPORARY FROM CATEGORY ID 0 from each ITEM for the template of category
 async function category_template(id,socket) {
     console.log(id)
@@ -411,6 +425,72 @@ async function get_users(socket) {
     
 }
 
+async function review(rating, description,ID,user) {
+    // retriving the itemid from order items
+    console.log("TESR", rating);
+    const idNum = Number(ID);
+
+    //checks if the item has already been rated
+    const [rateing] = await pool.query(
+        `SELECT 
+        CASE 
+        WHEN COUNT(*) > 0 THEN 'EXISTS'
+        ELSE 'NOT_EXISTS'
+        END AS RATE
+        FROM RATE
+        WHERE ITEM_ID = ?`,
+        [idNum]
+    );    
+
+    const rate = rateing[0].RATE; //rating of item
+
+    // retriving the USE_ID of the seller 
+    const [users] = await pool.query(
+        `SELECT USER_ID
+         FROM ITEM
+         WHERE ITEM_ID = ?`,
+        [idNum]
+    );
+    const seller_id = users[0].USER_ID; // seller_id
+
+
+    //insert the inital review INSERTED
+    if (rateing[0].RATE === 'NOT_EXISTS') {
+        await pool.query(`
+        INSERT INTO RATE (DESCRIPTION,RATING,ITEM_ID,USER_ID)
+        VALUES (?, ?, ?, ?)`, [description, rating,idNum,seller_id]
+        ); 
+       
+    }
+    else{
+    //UPDATE RATING
+    await pool.query(`
+    UPDATE RATE  
+    SET RATING = ?,
+    DESCRIPTION = ?
+    WHERE ITEM_ID`, [rating, description,idNum]
+    ); 
+
+    
+    //use avg method inorde to get avg score
+    await pool.query(`
+        UPDATE RATE  
+        SET RATING = ?,
+        DESCRIPTION = ?
+        WHERE ITEM_ID = ?
+    `, [rating, description, idNum]);
+        const avg = rows[0].AVERAGE
+   
+
+    await pool.query(
+        `UPDATE USERS
+         SET AVG = ?
+         WHERE USER_ID = ?`,
+        [avg, seller_id]
+    );
+    }
+}
+
 async function  delete_user(user, socket) {
     console.log("delet user:", user.USERNAME)
          const [baksetid] = await pool.query(`
@@ -444,18 +524,20 @@ async function get_items(socket) {
 }
 
 async function delete_item(item, socket) {
+   
+        // delet from ITEM
+    await pool.query(
+        `DELETE FROM ITEM WHERE ITEM_ID = ?`,
+        [item]
+    );
+     // delet from basket_ITEM
+    await pool.query(
+        `DELETE FROM basket_ITEM WHERE ITEM_ID = ?`,
+        [item]
+    )
 
 
-        // delet from basket_ITEM
-         await pool.query(`
-            DELETE FROM basket_ITEM WHERE ITEM_ID`, [item.ITEM_ID]);
-
-         // delete from item
-            await pool.query(`
-            DELETE FROM ITEM WHERE ITEM_ID`, [item.ITEM_ID]);
-        get_items(socket);
-
-    
+    get_items(socket);
 }
 
 
@@ -548,7 +630,8 @@ async function get_raw_history(userId, socket) {
             SELECT 
                 i.TITLE, 
                 oi.PRICE_SUM, 
-                oi.QUANTITY, 
+                oi.QUANTITY,
+                oi.ITEM_ID, 
                 o.ORDER_ID
             FROM USERS u
             INNER JOIN BASKET b ON u.USER_ID = b.USER_ID
@@ -557,12 +640,15 @@ async function get_raw_history(userId, socket) {
             INNER JOIN ITEM i ON oi.ITEM_ID = i.ITEM_ID
             WHERE u.USER_ID = ?
         `, [userId]);
-
+        console.log("history data: ", rows);
+        
         socket.emit("history_data_raw", rows);
     } catch (error) {
         console.error("Mechanical Fetch Error:", error);
     }
 }
+
+
 
 
 const io = new Server(server, {
@@ -587,6 +673,9 @@ io.on('connection', (socket) => {
         Loggin(username,Password, socket);
             } );
 
+    socket.on("review", ({rating, description,ID,user})=>{
+         review(rating, description,ID, user);
+    });
     socket.on("fetch_history", (userId) => {
     get_raw_history(userId, socket);
 });
@@ -632,6 +721,11 @@ io.on('connection', (socket) => {
     socket.on("category_list", ()=>{
         category_list(socket) 
     });
+
+    socket.on("review_template", (id)=>{
+        review_template(id,socket) 
+    }); 
+
     socket.on("category_template", (id)=>{
         category_template(id,socket) 
     });
@@ -658,7 +752,9 @@ io.on('connection', (socket) => {
         console.log("get_items")
         get_items(socket);
     })
-
+    socket.on("seller_delete_item", (item1)=>{
+        delete_item(item1, socket);
+    })
     socket.on("delete_item", (item1)=>{
                 const item = item1[0]
                 const admin = item1[1]
