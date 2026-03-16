@@ -25,13 +25,13 @@ const pool = mysql.createPool({
 }).promise()
 
 ///////////////////// Files to Local public folder
- //gives you full control on storing files to disk.
+ //gives you full control to wheren and how thee file will be stored.
 const storage = multer.diskStorage({
      destination: function (req, file, cb) {
           cb(null, './Frontend/website/public/uploads')
     },
    filename: function (req, file, cb) {
-         cb(null, Date.now() + '-' + file.originalname); // [] gonna need to place the date the image was created later
+         cb(null, Date.now() + '-' + file.originalname); 
    }
 });
 
@@ -56,7 +56,7 @@ app.post('/upload', upload.fields([
     const image_2 = req.files.image_2?.[0]?.filename||null;
     const image_3 = req.files.image_3?.[0]?.filename||null;
     
-    
+    //retrive username
      const[rows] = await pool.query(`
         SELECT *
         FROM USERS
@@ -73,58 +73,8 @@ app.post('/upload', upload.fields([
         VALUES ( ?, ?,?, ?, ?, ?, ?,?,?)`,
         [title, userId,description,categoryID,price,image_1,image_2,image_3,username]
         );    
-
-     //res.send('File uploaded successfully from multer.');
-     //res.redirect('http://localhost:5173');
-     
-});
-/*
-
-app.post('/update', upload.fields([
-    { name: 'image_1', maxCount: 1 },
-    { name: 'image_2', maxCount: 1 },
-    { name: 'image_3', maxCount: 1 }  
-]), async(req, res) => {
-
-    const itemId = Number(req.body.itemId);
-    const [rows] = await pool.query(
-        `SELECT * FROM ITEM WHERE ITEM_ID = ${itemId}`,
-    );
-
-    const item = rows[0];
-    //reaquestion the data and files from the form
-    
-    const title = req.body.title || item.TITLE;
-    const description = req.body.description || item.DESCRIPTION;
-    const categoryID = req.body.categoryID || item.CATEGORY_ID;
-    const price = req.body.price || item.PRICE;
-
-    const image_1 = req.files.image_1?.[0]?.filename || item.IMAGE_1;
-    const image_2 = req.files.image_2?.[0]?.filename || item.IMAGE_2;
-    const image_3 = req.files.image_3?.[0]?.filename || item.IMAGE_3;
-    
-    //insert the updated info into item table
-        await pool.query(
-        `UPDATE ITEM
-        SET 
-        TITLE = ?,
-        DESCRIPTION = ?,
-        CATEGORY_ID = ?,
-        PRICE = ?,
-        IMAGE_1 = ?,
-        IMAGE_2 = ?,
-        IMAGE_3 = ?
-        WHERE ITEM_ID = ?
-        `,
-        [title, description, categoryID, price, image_1, image_2, image_3, itemId]
-        );
-
-     //res.send('File uploaded successfully from multer.');
-     //res.redirect('http://localhost:5173/home');
-     
 });
 
-*/
 
 //////////////////// DATABASE TABLE GETERS
 
@@ -147,7 +97,7 @@ async function category_list(socket) {
     socket.emit("category_map", rows);
     //return rows.length;
 }
-//get the reviews the user has gotten
+//retrives the reviews the user has gotten from the buyers
 async function review_template(id, socket) {
 
   const [reviews] = await pool.query(
@@ -162,7 +112,7 @@ async function review_template(id, socket) {
 
   socket.emit("review_map", reviews);
 }
-//get the info of all item TEMPORARY FROM CATEGORY ID 0 from each ITEM for the template of category
+//get the info of all item FROM a specific CATEGORY ID 
 async function category_template(id,socket) {
     console.log(id)
     const[rows] = await pool.query(`
@@ -424,73 +374,77 @@ async function get_users(socket) {
 
     
 }
+// function that inserts or updates a review for an item
 
-async function review(rating, description,ID,user) {
-    // retriving the itemid from order items
-    console.log("TESR", rating);
+async function review(rating, description, ID, user) {
+
+    // Convert the item ID to a number
     const idNum = Number(ID);
 
-    //checks if the item has already been rated
+    // Check if the item already has a review in the RATE table
     const [rateing] = await pool.query(
         `SELECT 
-        CASE 
-        WHEN COUNT(*) > 0 THEN 'EXISTS'
-        ELSE 'NOT_EXISTS'
-        END AS RATE
-        FROM RATE
-        WHERE ITEM_ID = ?`,
+            CASE 
+                WHEN COUNT(*) > 0 THEN 'EXISTS'
+                ELSE 'NOT_EXISTS'
+            END AS RATE
+         FROM RATE
+         WHERE ITEM_ID = ?`,
         [idNum]
-    );    
+    );
 
-    const rate = rateing[0].RATE; //rating of item
-
-    // retriving the USE_ID of the seller 
+    // retrieve the sellers USER_ID from the ITEM table
     const [users] = await pool.query(
         `SELECT USER_ID
          FROM ITEM
          WHERE ITEM_ID = ?`,
         [idNum]
     );
-    const seller_id = users[0].USER_ID; // seller_id
 
+ 
+    const seller_id = users[0].USER_ID;
 
-    //insert the inital review INSERTED
+    // If no rating exists for this item, insert a new review
     if (rateing[0].RATE === 'NOT_EXISTS') {
-        await pool.query(`
-        INSERT INTO RATE (DESCRIPTION,RATING,ITEM_ID,USER_ID)
-        VALUES (?, ?, ?, ?)`, [description, rating,idNum,seller_id]
-        ); 
-       
+
+        await pool.query(
+            `INSERT INTO RATE (DESCRIPTION, RATING, ITEM_ID, USER_ID)
+             VALUES (?, ?, ?, ?)`,
+            [description, rating, idNum, seller_id]
+        );
+
+    } else {
+
+        // If a rating already exists for this item then updates it
+        await pool.query(
+            `UPDATE RATE
+             SET RATING = ?, DESCRIPTION = ?
+             WHERE ITEM_ID = ?`,
+            [rating, description, idNum]
+        );
     }
-    else{
-    //UPDATE RATING
-    await pool.query(`
-    UPDATE RATE  
-    SET RATING = ?,
-    DESCRIPTION = ?
-    WHERE ITEM_ID`, [rating, description,idNum]
-    ); 
+
+    // Calculate the sellers average rating from all ratings
+    const [rows] = await pool.query(
+        `SELECT AVG(RATING) AS AVERAGE
+         FROM RATE
+         WHERE USER_ID = ?`,
+        [seller_id]
+    );
 
     
-    //use avg method inorde to get avg score
-    await pool.query(`
-        UPDATE RATE  
-        SET RATING = ?,
-        DESCRIPTION = ?
-        WHERE ITEM_ID = ?
-    `, [rating, description, idNum]);
-        const avg = rows[0].AVERAGE
-   
+    const avg = rows[0].AVERAGE;
 
+    // Update the USERS table with the new average rating
     await pool.query(
         `UPDATE USERS
          SET AVG = ?
          WHERE USER_ID = ?`,
         [avg, seller_id]
     );
-    }
-}
 
+    console.log("seller_id:", seller_id, "avg:", avg);
+}
 async function  delete_user(user, socket) {
     console.log("delet user:", user.USERNAME)
          const [baksetid] = await pool.query(`
